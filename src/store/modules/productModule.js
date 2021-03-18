@@ -7,7 +7,7 @@ Vue.use(Vuex);
 
 export default {
   state: {
-    productsData: Array,
+    productsData: null,
   },
   mutations: {
     updateProductsData(state, products) {
@@ -15,13 +15,19 @@ export default {
     },
   },
   getters: {
-    products(state) {
-      return state.productsData.items;
+    productsData(state) {
+      return state.productsData
+        ? state.productsData
+        : [];
     },
   },
   actions: {
-    async loadProducts(context) {
+    async loadProducts(context, { page, limit }) {
       const response = await axios.get(`${API_BASE_URL}/api/products`, {
+        params: {
+          page,
+          limit,
+        },
       });
       context.commit('updateProductsData', response.data);
     },

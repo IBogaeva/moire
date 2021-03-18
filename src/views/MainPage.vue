@@ -7,7 +7,7 @@
           Каталог
         </h1>
         <span class="content__info">
-          {{ products.length }} товара
+          {{ countProducts }} товаров
         </span>
       </div>
     </div>
@@ -142,55 +142,7 @@
 
       <section class="catalog">
         <ProductList :products="products"/>
-
-        <ul class="catalog__pagination pagination">
-          <li class="pagination__item">
-            <a class="pagination__link pagination__link--arrow pagination__link--disabled"
-               aria-label="Предыдущая страница">
-              <svg width="8" height="14" fill="currentColor">
-                <use xlink:href="#icon-arrow-left"></use>
-              </svg>
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link pagination__link--current">
-              1
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link" href="#">
-              2
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link" href="#">
-              3
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link" href="#">
-              4
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link" href="#">
-              ...
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link" href="#">
-              10
-            </a>
-          </li>
-          <li class="pagination__item">
-            <a class="pagination__link pagination__link--arrow"
-               href="#" aria-label="Следующая страница">
-              <svg width="8" height="14" fill="currentColor">
-                <use xlink:href="#icon-arrow-right"></use>
-              </svg>
-            </a>
-          </li>
-        </ul>
+        <BasePagination v-model="page" :count="countProducts" :per-page="productsPerPage"/>
       </section>
     </div>
   </main>
@@ -198,22 +150,50 @@
 
 <script>
 import ProductList from '@/components/product/ProductList.vue';
+import BasePagination from '@/components/BasePagination.vue';
 import { mapGetters } from 'vuex';
 
 export default {
   components: {
-    ProductList,
+    ProductList, BasePagination,
+  },
+  data() {
+    return {
+      productsPerPage: 12,
+      page: 1,
+      productsLoading: false,
+      productsLoadingFailed: false,
+    };
+  },
+  methods: {
+    loadProductsData() {
+      clearTimeout(this.loadProductsTimer);
+      this.loadProductsTimer = setTimeout(() => {
+        this.$store.dispatch('loadProducts', {
+          page: this.page,
+          limit: this.productsPerPage,
+        })
+          .catch(() => { this.productsLoadingFailed = true; })
+          .then(() => { this.productsLoading = false; });
+      }, 1000);
+    },
   },
   computed: {
     ...mapGetters({
-      products: 'products',
+      productsData: 'productsData',
     }),
+    products() {
+      return this.productsData ? this.productsData.items : [];
+    },
+    countProducts() {
+      return this.productsData.pagination ? this.productsData.pagination.total : 0;
+    },
   },
   watch: {
-    page: 'loadProducts',
+    page: 'loadProductsData',
     customFilters: {
       handler() {
-        this.$store.dispatch('loadProducts');
+        this.loadProductsData();
       },
       immediate: true,
       deep: true,
