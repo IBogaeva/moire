@@ -22,11 +22,26 @@ export default {
     },
   },
   actions: {
-    async loadProducts(context, { page, limit }) {
+    async loadProducts(context, {
+      page,
+      limit,
+      categoryId,
+      materialIds,
+      seasonIds,
+      colorIds,
+      minPrice,
+      maxPrice,
+    }) {
       const response = await axios.get(`${API_BASE_URL}/api/products`, {
         params: {
+          categoryId,
+          materialIds,
+          seasonIds,
+          colorIds,
           page,
           limit,
+          minPrice,
+          maxPrice,
         },
       });
       context.commit('updateProductsData', response.data);
