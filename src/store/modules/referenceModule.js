@@ -7,17 +7,31 @@ Vue.use(Vuex);
 
 export default {
   state: {
-    categoriesData: null,
+    categoriesData: {
+      items: [{
+        id: 0,
+        title: String,
+        slug: String,
+      }],
+    },
     colorsData: {
       items: [{
-        id: Number,
+        id: 0,
         title: String,
         code: String,
       }],
     },
     materialsData: {
       items: [{
-        id: Number,
+        id: 0,
+        title: String,
+        code: String,
+        productsCount: Number,
+      }],
+    },
+    seasonsData: {
+      items: [{
+        id: 0,
         title: String,
         code: String,
         productsCount: Number,
@@ -33,6 +47,9 @@ export default {
     },
     updateMaterialsData(state, materials) {
       state.materialsData = materials;
+    },
+    updateSeasonsData(state, seasons) {
+      state.seasonsData = seasons;
     },
   },
   getters: {
@@ -51,6 +68,11 @@ export default {
         ? state.materialsData.items
         : [];
     },
+    seasonsData(state) {
+      return state.seasonsData
+        ? state.seasonsData.items
+        : [];
+    },
   },
   actions: {
     async loadCategories(context) {
@@ -64,6 +86,10 @@ export default {
     async loadMaterials(context) {
       const response = await axios.get(`${API_BASE_URL}/api/materials`);
       context.commit('updateMaterialsData', response.data);
+    },
+    async loadSeasons(context) {
+      const response = await axios.get(`${API_BASE_URL}/api/seasons`);
+      context.commit('updateSeasonsData', response.data);
     },
   },
 };
