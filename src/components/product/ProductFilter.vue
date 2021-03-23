@@ -148,6 +148,7 @@ export default {
       categories: 'categoriesData',
       colors: 'colorsData',
       materials: 'materialsData',
+      seasons: 'seasonsData',
     }),
   },
   methods: {
@@ -159,10 +160,18 @@ export default {
       this.$emit('update:seasonIds', this.currentSeasonIds);
       this.$emit('update:materialIds', this.currentMaterialIds);
     },
-    ...mapActions(['loadCategories']),
+    ...mapActions([
+      'loadCategories',
+      'loadColors',
+      'loadMaterials',
+      'loadSeasons',
+    ]),
   },
   created() {
     this.loadCategories();
+    this.loadColors();
+    this.loadMaterials();
+    this.loadSeasons();
   },
 };
 </script>
