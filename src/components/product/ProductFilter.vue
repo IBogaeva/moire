@@ -28,45 +28,13 @@
       </fieldset>
 
       <fieldset class="form__block">
-        <legend class="form__legend">Материал</legend>
-        <ul class="check-list">
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="material" value="лен">
-              <span class="check-list__desc">
-                    лен
-                    <span>(3)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="material" value="хлопок">
-              <span class="check-list__desc">
-                    хлопок
-                    <span>(46)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="material" value="шерсть">
-              <span class="check-list__desc">
-                    шерсть
-                    <span>(20)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="material" value="шелк">
-              <span class="check-list__desc">
-                    шелк
-                    <span>(30)</span>
+        <legend class="form__legend">Цвет</legend>
+        <ul class="colors colors--black">
+          <li class="colors__item"  v-for="item in colors" :key="item.id">
+            <label class="colors__label">
+              <input type="checkbox" class="colors__radio sr-only"
+                     :value="item.id" v-model="currentColorIds">
+              <span class="colors__value" :style="'background-color: ' + item.code + ';'">
                   </span>
             </label>
           </li>
@@ -74,55 +42,19 @@
       </fieldset>
 
       <fieldset class="form__block">
+        <legend class="form__legend">Материал</legend>
+        <CheckList :current-ids.sync="currentMaterialIds" :list="materials"/>
+      </fieldset>
+
+      <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
-        <ul class="check-list">
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="collection" value="лето" checked="">
-              <span class="check-list__desc">
-                    лето
-                    <span>(2)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="collection" value="зима">
-              <span class="check-list__desc">
-                    зима
-                    <span>(53)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="collection" value="весна">
-              <span class="check-list__desc">
-                    весна
-                    <span>(24)</span>
-                  </span>
-            </label>
-          </li>
-          <li class="check-list__item">
-            <label class="check-list__label">
-              <input class="check-list__check sr-only"
-                     type="checkbox" name="collection" value="осень">
-              <span class="check-list__desc">
-                    осень
-                    <span>(30)</span>
-                  </span>
-            </label>
-          </li>
-        </ul>
+        <CheckList :current-ids.sync="currentSeasonIds" :list="seasons"/>
       </fieldset>
 
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button">
+      <button class="filter__reset button button--second" type="button" @click.prevent="reset">
         Сбросить
       </button>
     </form>
@@ -131,8 +63,13 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import CheckList from '@/components/common/CheckList.vue';
 
 export default {
+  props: ['priceFrom', 'priceTo', 'categoryId', 'colorIds', 'materialIds', 'seasonIds'],
+  components: {
+    CheckList,
+  },
   data() {
     return {
       currentCategoryId: 0,
@@ -159,6 +96,20 @@ export default {
       this.$emit('update:colorIds', this.currentColorIds);
       this.$emit('update:seasonIds', this.currentSeasonIds);
       this.$emit('update:materialIds', this.currentMaterialIds);
+    },
+    reset() {
+      this.$emit('update:priceFrom', 0);
+      this.$emit('update:priceTo', 0);
+      this.$emit('update:categoryId', 0);
+      this.$emit('update:colorIds', []);
+      this.$emit('update:seasonIds', []);
+      this.$emit('update:materialIds', []);
+      this.currentPriceFrom = 0;
+      this.currentPriceFrom = 0;
+      this.currentPriceTo = 0;
+      this.currentMaterialIds = [];
+      this.currentSeasonIds = [];
+      this.currentColorIds = [];
     },
     ...mapActions([
       'loadCategories',

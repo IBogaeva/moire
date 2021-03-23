@@ -8,10 +8,14 @@ Vue.use(Vuex);
 export default {
   state: {
     productsData: null,
+    productData: null,
   },
   mutations: {
     updateProductsData(state, products) {
       state.productsData = products;
+    },
+    updateProduct(state, product) {
+      state.productData = product;
     },
   },
   getters: {
@@ -19,6 +23,19 @@ export default {
       return state.productsData
         ? state.productsData
         : [];
+    },
+    productData(state) {
+      return state.productData
+        ? state.productData
+        : undefined;
+    },
+    categoryData(state) {
+      return state.productData
+        ? state.productData.category
+        : '';
+    },
+    productColorsData(state) {
+      return state.productData.colors;
     },
   },
   actions: {
@@ -45,6 +62,10 @@ export default {
         },
       });
       context.commit('updateProductsData', response.data);
+    },
+    async loadProduct(context, id) {
+      const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
+      context.commit('updateProduct', response.data);
     },
   },
 };
