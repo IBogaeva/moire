@@ -49,7 +49,7 @@
           {{ product.title }}
         </h2>
         <div class="item__form">
-          <form class="form" action="#" method="POST">
+          <form class="form" action="#" method="POST" @submit.prevent="addToCart">
             <div class="item__row item__row--center">
               <AmountChange :current-amount.sync="productAmount" class="form__counter" />
               <b class="item__price">
@@ -72,9 +72,12 @@
               </fieldset>
             </div>
 
-            <button class="item__button button button--primery" type="submit">
+            <button class="item__button button button--primery"
+                    type="submit" :disabled="productAddSending">
               В корзину
             </button>
+            <div v-show="productAdded">Товар добавлен в корзину</div>
+            <div v-show="productAddSending">Добавляем товар в корзину...</div>
           </form>
         </div>
       </div>
@@ -82,35 +85,21 @@
       <div class="item__desc">
         <ul class="tabs">
           <li class="tabs__item">
-            <a class="tabs__link tabs__link--current">
+            <router-link class="tabs__link tabs__link--current"
+                         :to="{name: 'product', params: {id: product.id}}">
               Информация о товаре
-            </a>
+            </router-link>
           </li>
           <li class="tabs__item">
-            <a class="tabs__link" href="#">
+            <router-link class="tabs__link"
+                         :to="{name: 'product', params: {id: product.id}}">
               Доставка и возврат
-            </a>
+            </router-link>
           </li>
         </ul>
 
         <div class="item__content">
-          <h3>Состав:</h3>
-
-          <p>
-            60% хлопок<br>
-            30% полиэстер<br>
-          </p>
-
-          <h3>Уход:</h3>
-
-          <p>
-            Машинная стирка при макс. 30ºC короткий отжим<br>
-            Гладить при макс. 110ºC<br>
-            Не использовать машинную сушку<br>
-            Отбеливать запрещено<br>
-            Не подвергать химчистке<br>
-          </p>
-
+            {{ product.content }}
         </div>
       </div>
     </section>
@@ -118,7 +107,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import ColorList from '@/components/common/ColorList.vue';
 import numberFormat from '@/helpers/numberFormat';
 import AmountChange from '@/components/common/AmountChange.vue';
@@ -147,6 +136,7 @@ export default {
     ...mapGetters({
       product: 'productData',
       colorId: 'colorIdData',
+      sizeId: 'sizeIdData',
     }),
     colors() {
       return this.product.colors.map((item) => ({
@@ -185,6 +175,21 @@ export default {
             this.currentColorId = this.colorId;
           });
       }, 1000);
+    },
+    ...mapActions(['addProductToCart']),
+    addToCart() {
+      this.productAdded = false;
+      this.productAddSending = true;
+      this.addProductToCart({
+        id: this.product.id,
+        colorId: this.currentColorId,
+        sizeId: this.currentSizeId,
+        amount: this.productAmount,
+      })
+        .then(() => {
+          this.productAdded = true;
+          this.productAddSending = false;
+        });
     },
   },
   watch: {

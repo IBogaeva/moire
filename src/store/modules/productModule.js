@@ -75,6 +75,9 @@ export default {
     colorIdData(state) {
       return state.productData.colors ? state.productData.colors[0].color.id : 0;
     },
+    sizeIdData(state) {
+      return state.productData.sizes ? state.productData.sizes[0].id : 0;
+    },
   },
   actions: {
     async loadProducts(context, {
