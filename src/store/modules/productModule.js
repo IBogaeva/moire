@@ -8,7 +8,50 @@ Vue.use(Vuex);
 export default {
   state: {
     productsData: null,
-    productData: null,
+    productData: {
+      category: {
+        id: Number,
+        slug: String,
+        title: String,
+      },
+      colors: [{
+        color: {
+          code: String,
+          id: Number,
+          title: String,
+        },
+        gallery: [{
+          file: {
+            extension: String,
+            name: String,
+            originalName: String,
+            size: String,
+            url: String,
+          },
+        }],
+      }],
+      content: String,
+      id: Number,
+      materials: [{
+        code: String,
+        id: Number,
+        productsCount: Number,
+        title: String,
+      }],
+      price: Number,
+      seasons: [{
+        code: String,
+        id: Number,
+        productsCount: Number,
+        title: String,
+      }],
+      sizes: [{
+        id: Number,
+        title: String,
+      }],
+      slug: String,
+      title: String,
+    },
   },
   mutations: {
     updateProductsData(state, products) {
@@ -29,13 +72,8 @@ export default {
         ? state.productData
         : undefined;
     },
-    categoryData(state) {
-      return state.productData
-        ? state.productData.category
-        : '';
-    },
-    productColorsData(state) {
-      return state.productData.colors;
+    colorIdData(state) {
+      return state.productData.colors ? state.productData.colors[0].color.id : 0;
     },
   },
   actions: {

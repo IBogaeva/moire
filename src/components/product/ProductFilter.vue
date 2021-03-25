@@ -17,13 +17,9 @@
       <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
-          <select class="form__select" type="text" name="category"
-                  v-model.number="currentCategoryId">
+          <OptionList :list="categories" :current-id.sync="currentCategoryId">
             <option value="0">Все категории</option>
-            <option :value="category.id" v-for="category in categories" :key="category.id">
-              {{ category.title }}
-            </option>
-          </select>
+          </OptionList>
         </label>
       </fieldset>
 
@@ -54,7 +50,8 @@
       <button class="filter__submit button button--primery" type="submit">
         Применить
       </button>
-      <button class="filter__reset button button--second" type="button" @click.prevent="reset">
+      <button class="filter__reset button button--second" type="button" @click.prevent="reset"
+              v-show="isFilterSet">
         Сбросить
       </button>
     </form>
@@ -64,11 +61,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import CheckList from '@/components/common/CheckList.vue';
+import OptionList from '@/components/common/OptionList.vue';
 
 export default {
   props: ['priceFrom', 'priceTo', 'categoryId', 'colorIds', 'materialIds', 'seasonIds'],
   components: {
-    CheckList,
+    CheckList, OptionList,
   },
   data() {
     return {
@@ -87,6 +85,14 @@ export default {
       materials: 'materialsData',
       seasons: 'seasonsData',
     }),
+    isFilterSet() {
+      return this.currentCategoryId > 0
+        || this.currentPriceFrom > 0
+        || this.currentPriceTo > 0
+        || this.currentMaterialIds.length > 0
+        || this.currentSeasonIds.length > 0
+        || this.currentColorIds.length > 0;
+    },
   },
   methods: {
     submit() {
@@ -105,8 +111,8 @@ export default {
       this.$emit('update:seasonIds', []);
       this.$emit('update:materialIds', []);
       this.currentPriceFrom = 0;
-      this.currentPriceFrom = 0;
       this.currentPriceTo = 0;
+      this.currentCategoryId = 0;
       this.currentMaterialIds = [];
       this.currentSeasonIds = [];
       this.currentColorIds = [];
