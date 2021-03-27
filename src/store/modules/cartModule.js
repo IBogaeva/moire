@@ -7,7 +7,63 @@ Vue.use(Vuex);
 
 export default {
   state: {
-    cartProductsData: [],
+    cartProductsData: [{
+      id: Number,
+      price: Number,
+      quantity: Number,
+      color: {
+        id: Number,
+        color: {
+          id: Number,
+          title: String,
+          code: String,
+        },
+        gallery: [{
+          file: {
+            extension: String,
+            name: String,
+            originalName: String,
+            size: String,
+            url: String,
+          },
+        }],
+      },
+      product: {
+        colors: [{
+          id: Number,
+          color: {
+            code: String,
+            id: Number,
+            title: String,
+          },
+          gallery: [{
+            file: {
+              extension: String,
+              name: String,
+              originalName: String,
+              size: String,
+              url: String,
+            },
+          }],
+        }],
+        id: Number,
+        materials: [{
+          code: String,
+          id: Number,
+          productsCount: Number,
+          title: String,
+        }],
+        price: Number,
+        seasons: [{
+          code: String,
+          id: Number,
+          productsCount: Number,
+          title: String,
+        }],
+        slug: String,
+        title: String,
+      },
+    }],
     cartProducts: [],
     cartProductsLoading: true,
   },
@@ -17,14 +73,14 @@ export default {
     },
     syncCartProducts(state) {
       state.cartProducts = state.cartProductsData.map((item) => ({
-        productId: item.product.id, amount: item.quantity,
+        id: item.id, productId: item.product.id, amount: item.quantity,
       }));
     },
     updateCartProductsLoading(state, loading) {
       state.cartProductsLoading = loading;
     },
-    deleteCartProduct(state, productId) {
-      state.cartProducts = state.cartProducts.filter((item) => item.productId !== productId);
+    deleteCartProduct(state, id) {
+      state.cartProducts = state.cartProducts.filter((item) => item.id !== id);
     },
     resetCart(state) {
       state.cartProducts = [];
@@ -50,6 +106,10 @@ export default {
           },
         };
       });
+    },
+    cartTotalPrice(state, getters) {
+      return getters.cartDetailProducts
+        .reduce((acc, item) => (item.product.price * item.amount) + acc, 0);
     },
     cartTotalAmount(state, getters) {
       return getters.cartDetailProducts
@@ -94,6 +154,45 @@ export default {
       });
       context.commit('updateCartProductsData', response.data.items);
       context.commit('syncCartProducts');
+    },
+    async updateCartProductAmount(context, { id, productId, amount }) {
+      context.commit('updateCartProductAmount', { productId, amount });
+      if (amount < 1) {
+        return;
+      }
+      await axios.put(`${API_BASE_URL}/api/baskets/products`, {
+        basketItemId: id,
+        quantity: amount,
+      }, {
+        params: {
+          userAccessKey: context.rootState.userAccessKey,
+        },
+      })
+        .then((response) => {
+          context.commit('updateCartProductsData', response.data.items);
+        })
+        .catch(() => {
+          context.commit('syncCartProducts');
+        });
+    },
+    async deleteCartProduct(context, id) {
+      await axios.request({
+        method: 'delete',
+        url: `${API_BASE_URL}/api/baskets/products`,
+        params: {
+          userAccessKey: context.rootState.userAccessKey,
+        },
+        data: {
+          basketItemId: id,
+        },
+      })
+        .then((response) => {
+          context.commit('updateCartProductsData', response.data.items, id);
+          context.commit('syncCartProducts');
+        })
+        .catch(() => {
+          context.commit('syncCartProducts');
+        });
     },
   },
 };
