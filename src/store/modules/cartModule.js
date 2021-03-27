@@ -38,16 +38,37 @@ export default {
       }
     },
   },
+  getters: {
+    cartDetailProducts(state) {
+      return state.cartProducts.map((item) => {
+        const { product: cartProduct } = state.cartProductsData
+          .find((p) => p.product.id === item.productId);
+        return {
+          ...item,
+          product: {
+            ...cartProduct,
+          },
+        };
+      });
+    },
+    cartTotalAmount(state, getters) {
+      return getters.cartDetailProducts
+        .reduce((acc, item) => item.amount + acc, 0);
+    },
+    cartProductsLoading(state) {
+      return state.cartProductsLoading;
+    },
+  },
   actions: {
     async loadCart(context) {
       context.commit('updateCartProductsLoading', true);
       await axios.get(`${API_BASE_URL}/api/baskets`, {
         params: {
-          userAccessKey: context.state.userAccessKey,
+          userAccessKey: context.rootState.userAccessKey,
         },
       })
         .then((response) => {
-          if (!context.state.userAccessKey) {
+          if (!context.rootState.userAccessKey) {
             localStorage.setItem('userAccessKey', response.data.user.accessKey);
             context.commit('updateUserAccessKey', response.data.user.accessKey);
           }
@@ -68,7 +89,7 @@ export default {
         quantity: amount,
       }, {
         params: {
-          userAccessKey: context.state.userAccessKey,
+          userAccessKey: context.rootState.userAccessKey,
         },
       });
       context.commit('updateCartProductsData', response.data.items);
