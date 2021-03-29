@@ -35,7 +35,7 @@ export default {
     deliveryType: Object,
     default: () => ({
       id: Number,
-      title:
+      title: String,
     }),
   },
 };
