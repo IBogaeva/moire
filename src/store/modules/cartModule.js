@@ -66,6 +66,7 @@ export default {
     }],
     cartProducts: [],
     cartProductsLoading: true,
+    orderInfo: null,
   },
   mutations: {
     updateCartProductsData(state, items) {
@@ -82,16 +83,19 @@ export default {
     deleteCartProduct(state, id) {
       state.cartProducts = state.cartProducts.filter((item) => item.id !== id);
     },
-    resetCart(state) {
-      state.cartProducts = [];
-      state.cartProductsData = [];
-    },
     updateCartProductAmount(state, { productId, amount }) {
       const item = state.cartProducts.find((it) => it.productId === productId);
 
       if (item) {
         item.amount = amount;
       }
+    },
+    updateOrderInfo(state, orderInfo) {
+      state.orderInfo = orderInfo;
+    },
+    resetCart(state) {
+      state.cartProducts = [];
+      state.cartProductsData = [];
     },
   },
   getters: {
@@ -117,6 +121,9 @@ export default {
     },
     cartProductsLoading(state) {
       return state.cartProductsLoading;
+    },
+    orderInfoId(state) {
+      return state.orderInfo.id;
     },
   },
   actions: {
@@ -192,6 +199,27 @@ export default {
         })
         .catch(() => {
           context.commit('syncCartProducts');
+        });
+    },
+    async order(context, {
+      name, address, phone, email, deliveryTypeId, paymentTypeId, comment,
+    }) {
+      await axios.post(`${API_BASE_URL}/api/orders`, {
+        name,
+        address,
+        phone,
+        email,
+        deliveryTypeId,
+        paymentTypeId,
+        comment,
+      }, {
+        params: {
+          userAccessKey: context.rootState.userAccessKey,
+        },
+      })
+        .then((response) => {
+          this.$store.commit('resetCart');
+          this.$store.commit('updateOrderInfo', response.data);
         });
     },
   },

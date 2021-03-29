@@ -27,91 +27,45 @@
     </div>
 
     <section class="cart">
-      <form class="cart__form form" action="#" method="POST">
+      <Loader v-if="orderSending"/>
+      <form class="cart__form form" action="#" method="POST" @submit.prevent="createOrder">
         <div class="cart__field">
           <div class="cart__data">
-            <label class="form__label">
-              <input class="form__input" type="text" name="name"
-                     placeholder="Введите ваше полное имя">
-              <span class="form__value">ФИО</span>
-            </label>
+            <BaseFormText title="ФИО" placeholder="Введите ваше полное имя"
+                          v-model="formData.name" :error="formError.name"/>
 
-            <label class="form__label">
-              <input class="form__input" type="text" name="address" placeholder="Введите ваш адрес">
-              <span class="form__value">Адрес доставки</span>
-            </label>
+            <BaseFormText title="Адрес доставки" placeholder="Введите ваш адрес"
+                          v-model="formData.address" :error="formError.address"/>
 
-            <label class="form__label">
-              <input class="form__input" type="tel" name="phone" placeholder="Введите ваш телефон">
-              <span class="form__value">Телефон</span>
-              <span class="form__error">Неверный формат телефона</span>
-            </label>
+            <BaseFormText title="Телефон" placeholder="Введите ваш телефон"
+                          v-model="formData.phone" :error="formError.phone" type="tel"/>
 
-            <label class="form__label">
-              <input class="form__input" type="email" name="email" placeholder="Введи ваш Email">
-              <span class="form__value">Email</span>
-            </label>
+            <BaseFormText title="Email" placeholder="Введи ваш Email"
+                          v-model="formData.email" :error="formError.email" type="email"/>
 
-            <label class="form__label">
-              <textarea class="form__input form__input--area" name="comments"
-                        placeholder="Ваши пожелания"></textarea>
-              <span class="form__value">Комментарий к заказу</span>
-            </label>
+            <BaseFormTextarea title="Комментарий к заказу" :error="formError.comment"
+                             placeholder="Ваши пожелания"
+                             v-model="formData.comment"/>
           </div>
 
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
-            <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio"
-                         name="delivery" value="0" checked="">
-                  <span class="options__value">
-                    Самовывоз <b>бесплатно</b>
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="delivery" value="500">
-                  <span class="options__value">
-                    Курьером <b>290 ₽</b>
-                  </span>
-                </label>
-              </li>
-            </ul>
+             <RadioList :list="deliveryTypes" :current-id.sync="currentDeliveryTypeId"
+                        name='delivery'/>
 
             <h3 class="cart__title">Оплата</h3>
-            <ul class="cart__options options">
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio"
-                         name="pay" value="card" checked="">
-                  <span class="options__value">
-                    Картой при получении
-                  </span>
-                </label>
-              </li>
-              <li class="options__item">
-                <label class="options__label">
-                  <input class="options__radio sr-only" type="radio" name="pay" value="cash">
-                  <span class="options__value">
-                    Наличными при получении
-                  </span>
-                </label>
-              </li>
-            </ul>
+            <RadioList :list="payments" :current-id.sync="currentPaymentTypeId" name='payment'/>
           </div>
         </div>
-        <OrderSummary :data="total">
+        <OrderSummary :data="total" :delivery-type="currentDeliveryType">
           <button class="cart__button button button--primery" type="submit">
             Оформить заказ
           </button>
         </OrderSummary>
-        <div class="cart__error form__error-block">
+        <div class="cart__error form__error-block" v-if="formErrorMessage">
           <h4>Заявка не отправлена!</h4>
           <p>
-            Похоже произошла ошибка. Попробуйте отправить снова или перезагрузите страницу.
+            {{ formErrorMessage }}
           </p>
         </div>
       </form>
@@ -121,8 +75,12 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapActions } from 'vuex';
 import OrderSummary from '@/components/order/OrderSummary.vue';
+import RadioList from '@/components/common/RadioList.vue';
+import BaseFormText from '@/components/common/BaseFormText.vue';
+import BaseFormTextarea from '@/components/common/BaseFormTextarea.vue';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
   filters: {
@@ -130,20 +88,101 @@ export default {
   },
   components: {
     OrderSummary,
+    RadioList,
+    BaseFormText,
+    BaseFormTextarea,
+    Loader,
+  },
+  data() {
+    return {
+      currentDeliveryTypeId: 0,
+      currentPaymentTypeId: 0,
+      formData: {},
+      formError: {},
+      formErrorMessage: '',
+      orderSending: false,
+    };
   },
   computed: {
     ...mapGetters({
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice',
       totalAmount: 'cartTotalAmount',
+      deliveryTypes: 'deliveriesData',
+      payments: 'paymentsData',
       loading: 'cartProductsLoading',
+      orderInfoId: 'orderInfoId',
     }),
     total() {
       return {
         items: this.products,
         totalPrice: this.totalPrice,
         totalAmount: this.totalAmount,
+        deliveryType: this.currentDeliveryType,
       };
+    },
+    currentDeliveryType() {
+      return this.deliveryTypes
+        ? this.deliveryTypes.find((item) => item.id === this.currentDeliveryTypeId)
+        : undefined;
+    },
+  },
+  methods: {
+    ...mapActions(['loadDeliveries', 'loadPayments', 'order']),
+    loadDeliveryTypes() {
+      this.loadDeliveries()
+        .then(() => {
+          this.currentDeliveryTypeId = this.deliveryTypes[0].id;
+        });
+    },
+    loadPaymentTypes(deliveryTypeId) {
+      this.loadPayments(deliveryTypeId)
+        .then(() => {
+          this.currentPaymentTypeId = this.payments[0].id;
+        });
+    },
+    createOrder() {
+      this.formError = {};
+      this.formErrorMessage = '';
+      this.orderSending = true;
+      clearTimeout(this.orderSendingTimer);
+      this.orderSendingTimer = setTimeout(() => {
+        this.order(
+          this.formData.name,
+          this.formData.address,
+          this.formData.phone,
+          this.formData.email,
+          this.currentDeliveryTypeId,
+          this.currentPaymentTypeId,
+          this.formData.comment,
+        )
+          .then(() => {
+            this.$router.push({ name: 'orderInfo', params: { id: this.orderInfoId } });
+          })
+          .catch((error) => {
+            console.log(error.request);
+            this.formError = error.request || {};
+            this.formErrorMessage = error.message;
+          })
+          .then(() => {
+            this.orderSending = false;
+          });
+      }, 1000);
+    },
+  },
+  watch: {
+    currentDeliveryTypeId(value) {
+      this.currentDeliveryTypeId = value;
+      this.loadPaymentTypes(value);
+    },
+    currentPaymentId(value) {
+      this.currentPaymentTypeId = value;
+    },
+    $route: {
+      handler() {
+        this.loadDeliveryTypes();
+      },
+      immediate: true,
     },
   },
 };

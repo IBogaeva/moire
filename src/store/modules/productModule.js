@@ -72,11 +72,11 @@ export default {
         ? state.productData
         : undefined;
     },
-    colorIdData(state) {
-      return state.productData.colors ? state.productData.colors[0].color.id : 0;
+    colorIdData(state, getters) {
+      return getters.productData.colors ? getters.productData.colors[0].color.id : 0;
     },
-    sizeIdData(state) {
-      return state.productData.sizes ? state.productData.sizes[0].id : 0;
+    sizeIdData(state, getters) {
+      return getters.productData.sizes ? getters.productData.sizes[0].id : 0;
     },
   },
   actions: {

@@ -37,6 +37,15 @@ export default {
         productsCount: Number,
       }],
     },
+    deliveriesData: [{
+      id: 0,
+      title: String,
+      price: Number,
+    }],
+    paymentsData: [{
+      id: 0,
+      title: String,
+    }],
   },
   mutations: {
     updateCategoriesData(state, categories) {
@@ -50,6 +59,12 @@ export default {
     },
     updateSeasonsData(state, seasons) {
       state.seasonsData = seasons;
+    },
+    updateDeliveriesData(state, deliveries) {
+      state.deliveriesData = deliveries;
+    },
+    updatePaymentsData(state, payments) {
+      state.paymentsData = payments;
     },
   },
   getters: {
@@ -73,6 +88,16 @@ export default {
         ? state.seasonsData.items
         : [];
     },
+    deliveriesData(state) {
+      return state.deliveriesData
+        ? state.deliveriesData
+        : [];
+    },
+    paymentsData(state) {
+      return state.paymentsData
+        ? state.paymentsData
+        : [];
+    },
   },
   actions: {
     async loadCategories(context) {
@@ -90,6 +115,18 @@ export default {
     async loadSeasons(context) {
       const response = await axios.get(`${API_BASE_URL}/api/seasons`);
       context.commit('updateSeasonsData', response.data);
+    },
+    async loadDeliveries(context) {
+      const response = await axios.get(`${API_BASE_URL}/api/deliveries`);
+      context.commit('updateDeliveriesData', response.data);
+    },
+    async loadPayments(context, deliveryTypeId) {
+      const response = await axios.get(`${API_BASE_URL}/api/payments`, {
+        params: {
+          deliveryTypeId,
+        },
+      });
+      context.commit('updatePaymentsData', response.data);
     },
   },
 };

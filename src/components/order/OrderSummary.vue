@@ -9,8 +9,9 @@
     </ul>
 
     <div class="cart__total">
-      <p>Доставка: <b>бесплатно</b></p>
-      <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
+      <p>{{ deliveryType.title }}: <b> {{ deliveryType.price | deliveryFormat }}</b></p>
+      <p>Итого: <b>{{ data.totalAmount }}</b> товара на сумму
+        <b>{{ data.totalPrice | numberFormat }} ₽</b></p>
     </div>
     <slot/>
   </div>
@@ -18,10 +19,11 @@
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
+import deliveryFormat from '@/helpers/deliveryFormat';
 
 export default {
   filters: {
-    numberFormat,
+    numberFormat, deliveryFormat,
   },
   props: {
     data: {
@@ -32,11 +34,14 @@ export default {
         totalPrice: null,
       }),
     },
-    deliveryType: Object,
-    default: () => ({
-      id: Number,
-      title: String,
-    }),
+    deliveryType: {
+      type: Object,
+      default: () => ({
+        id: 0,
+        price: 0,
+        title: null,
+      }),
+    },
   },
 };
 </script>
