@@ -97,10 +97,16 @@ export default {
     return {
       currentDeliveryTypeId: 0,
       currentPaymentTypeId: 0,
-      formData: {},
+      formData: {
+        name: '',
+        address: '',
+        phone: '',
+        email: '',
+        comment: '',
+      },
+      orderSending: false,
       formError: {},
       formErrorMessage: '',
-      orderSending: false,
     };
   },
   computed: {
@@ -112,6 +118,7 @@ export default {
       payments: 'paymentsData',
       loading: 'cartProductsLoading',
       orderInfoId: 'orderInfoId',
+      error: 'formError',
     }),
     total() {
       return {
@@ -147,22 +154,22 @@ export default {
       this.orderSending = true;
       clearTimeout(this.orderSendingTimer);
       this.orderSendingTimer = setTimeout(() => {
-        this.order(
-          this.formData.name,
-          this.formData.address,
-          this.formData.phone,
-          this.formData.email,
-          this.currentDeliveryTypeId,
-          this.currentPaymentTypeId,
-          this.formData.comment,
-        )
+        this.order({
+          name: this.formData.name,
+          address: this.formData.address,
+          phone: this.formData.phone,
+          email: this.formData.email,
+          deliveryTypeId: this.currentDeliveryTypeId,
+          paymentTypeId: this.currentPaymentTypeId,
+          comment: this.formData.comment,
+        })
           .then(() => {
-            this.$router.push({ name: 'orderInfo', params: { id: this.orderInfoId } });
-          })
-          .catch((error) => {
-            console.log(error.request);
-            this.formError = error.request || {};
-            this.formErrorMessage = error.message;
+            if (this.error) {
+              this.formError = this.error.request;
+              this.formErrorMessage = this.error.message;
+            } else {
+              this.$router.push({ name: 'orderInfo', params: { id: this.orderInfoId } });
+            }
           })
           .then(() => {
             this.orderSending = false;

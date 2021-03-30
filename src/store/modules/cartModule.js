@@ -67,6 +67,7 @@ export default {
     cartProducts: [],
     cartProductsLoading: true,
     orderInfo: null,
+    error: null,
   },
   mutations: {
     updateCartProductsData(state, items) {
@@ -97,6 +98,9 @@ export default {
       state.cartProducts = [];
       state.cartProductsData = [];
     },
+    updateError(state, error) {
+      state.error = error;
+    },
   },
   getters: {
     cartDetailProducts(state) {
@@ -124,6 +128,9 @@ export default {
     },
     orderInfoId(state) {
       return state.orderInfo.id;
+    },
+    formError(state) {
+      return state.error;
     },
   },
   actions: {
@@ -218,8 +225,11 @@ export default {
         },
       })
         .then((response) => {
-          this.$store.commit('resetCart');
-          this.$store.commit('updateOrderInfo', response.data);
+          context.commit('resetCart');
+          context.commit('updateOrderInfo', response.data);
+        })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
         });
     },
   },
