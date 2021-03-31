@@ -13,6 +13,7 @@
                   <i :style="'background-color: ' + color.code + ';'"></i>
                   {{ color.title }}
                 </span>
+      <span> Размер: {{ item.size.title }} </span>
     </p>
     <span class="product__code">
                 Артикул: {{ item.product.id }}
@@ -59,10 +60,10 @@ export default {
       },
     },
     color() {
-      return this.item.product.colors ? this.item.product.colors[0].color : undefined;
+      return this.item.color ? this.item.color : undefined;
     },
     image() {
-      return this.item.product.colors ? this.item.product.colors[0].gallery[0].file.url : undefined;
+      return this.item.color ? this.item.image.file.url : undefined;
     },
   },
   methods: {

@@ -63,11 +63,14 @@ export default {
         slug: String,
         title: String,
       },
+      size: {
+        id: Number,
+        title: String,
+      },
     }],
     cartProducts: [],
     cartProductsLoading: true,
     orderInfo: null,
-    error: null,
   },
   mutations: {
     updateCartProductsData(state, items) {
@@ -75,7 +78,12 @@ export default {
     },
     syncCartProducts(state) {
       state.cartProducts = state.cartProductsData.map((item) => ({
-        id: item.id, productId: item.product.id, amount: item.quantity,
+        id: item.id,
+        productId: item.product.id,
+        amount: item.quantity,
+        color: item.color.color,
+        image: item.color.gallery[0],
+        size: item.size,
       }));
     },
     updateCartProductsLoading(state, loading) {
@@ -97,9 +105,6 @@ export default {
     resetCart(state) {
       state.cartProducts = [];
       state.cartProductsData = [];
-    },
-    updateError(state, error) {
-      state.error = error;
     },
   },
   getters: {
@@ -129,8 +134,8 @@ export default {
     orderInfoId(state) {
       return state.orderInfo.id;
     },
-    formError(state) {
-      return state.error;
+    orderInfo(state) {
+      return state.orderInfo;
     },
   },
   actions: {
@@ -226,6 +231,19 @@ export default {
       })
         .then((response) => {
           context.commit('resetCart');
+          context.commit('updateOrderInfo', response.data);
+        })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
+        });
+    },
+    async loadOrderInfo(context, orderId) {
+      await axios.get(`${API_BASE_URL}/api/orders/${orderId}`, {
+        params: {
+          userAccessKey: context.rootState.userAccessKey,
+        },
+      })
+        .then((response) => {
           context.commit('updateOrderInfo', response.data);
         })
         .catch((error) => {

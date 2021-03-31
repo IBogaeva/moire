@@ -9,10 +9,23 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     userAccessKey: null,
+    error: {
+      message: String,
+      code: Number,
+      request: {},
+    },
+  },
+  getters: {
+    formError(state) {
+      return state.error;
+    },
   },
   mutations: {
     updateUserAccessKey(state, accessKey) {
       state.userAccessKey = accessKey;
+    },
+    updateError(state, error) {
+      state.error = error;
     },
   },
   actions: {
