@@ -10,9 +10,12 @@ export default new Vuex.Store({
   state: {
     userAccessKey: null,
     error: {
-      message: String,
-      code: Number,
-      request: {},
+      type: Object,
+      default: () => ({
+        message: '',
+        code: Number,
+        request: {},
+      }),
     },
   },
   getters: {
@@ -23,6 +26,9 @@ export default new Vuex.Store({
   mutations: {
     updateUserAccessKey(state, accessKey) {
       state.userAccessKey = accessKey;
+    },
+    resetErrors(state) {
+      state.error = {};
     },
     updateError(state, error) {
       state.error = error;

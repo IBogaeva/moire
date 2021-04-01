@@ -33,13 +33,13 @@
             Наши менеджеры свяжутся с&nbsp;Вами в&nbsp;течение часа для уточнения деталей доставки.
           </p>
 
-          <ul class="dictionary">
+          <ul class="dictionary" v-if="orderInfo">
             <li class="dictionary__item">
               <span class="dictionary__key">
                 Получатель
               </span>
               <span class="dictionary__value">
-                Иванова Василиса Алексеевна
+                {{ orderInfo.name }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -47,7 +47,7 @@
                 Адрес доставки
               </span>
               <span class="dictionary__value">
-                Москва, ул. Ленина, 21, кв. 33
+                {{ orderInfo.address }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -55,7 +55,7 @@
                 Телефон
               </span>
               <span class="dictionary__value">
-                8 800 989 74 84
+                {{ orderInfo.phone }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -63,7 +63,7 @@
                 Email
               </span>
               <span class="dictionary__value">
-                lalala@mail.ru
+                {{ orderInfo.email }}
               </span>
             </li>
             <li class="dictionary__item">
@@ -71,36 +71,13 @@
                 Способ оплаты
               </span>
               <span class="dictionary__value">
-                картой при получении
+                {{ orderInfo.paymentType }}
               </span>
             </li>
           </ul>
         </div>
 
-        <div class="cart__block">
-          <ul class="cart__orders">
-            <li class="cart__order">
-              <h3>Смартфон Xiaomi Redmi Note 7 Pro 6/128GB</h3>
-              <b>990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Гироскутер Razor Hovertrax 2.0ii</h3>
-              <b>1 990 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-            <li class="cart__order">
-              <h3>Электрический дрифт-карт Razor Lil’ Crazy</h3>
-              <b>4 090 ₽</b>
-              <span>Артикул: 150030</span>
-            </li>
-          </ul>
-
-          <div class="cart__total">
-            <p>Доставка: <b>бесплатно</b></p>
-            <p>Итого: <b>3</b> товара на сумму <b>4 070 ₽</b></p>
-          </div>
-        </div>
+        <OrderSummary :data="total" :delivery-type="deliveryType"  v-if="orderInfo"/>
       </form>
     </section>
   </main>
@@ -109,8 +86,12 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
+import OrderSummary from '@/components/order/OrderSummary.vue';
 
 export default {
+  components: {
+    OrderSummary,
+  },
   filters: {
     numberFormat,
   },
@@ -118,6 +99,31 @@ export default {
     ...mapGetters({
       orderInfo: 'orderInfo',
     }),
+    basketItems() {
+      return this.orderInfo
+        ? this.orderInfo.basket.items.map((item) => ({
+          ...item,
+          amount: item.quantity,
+        }))
+        : [];
+    },
+    totalPrice() {
+      return this.orderInfo.totalPrice;
+    },
+    totalAmount() {
+      return this.orderInfo.basket.items
+        .reduce((acc, item) => item.quantity + acc, 0);
+    },
+    deliveryType() {
+      return this.orderInfo.deliveryType;
+    },
+    total() {
+      return {
+        items: this.basketItems,
+        totalPrice: this.totalPrice,
+        totalAmount: this.totalAmount,
+      };
+    },
   },
   methods: {
     ...mapActions(['loadOrderInfo']),
@@ -128,8 +134,8 @@ export default {
   watch: {
     '$route.params.id': {
       handler() {
-        if (this.$store.state.orderInfo
-          && this.$store.state.orderInfo.id === this.$route.params.id) {
+        if (this.orderInfo
+          && this.orderInfo.id === this.$route.params.id) {
           return;
         }
         this.getOrderInfo(this.$route.params.id);

@@ -131,9 +131,6 @@ export default {
     cartProductsLoading(state) {
       return state.cartProductsLoading;
     },
-    orderInfoId(state) {
-      return state.orderInfo.id;
-    },
     orderInfo(state) {
       return state.orderInfo;
     },
@@ -216,6 +213,7 @@ export default {
     async order(context, {
       name, address, phone, email, deliveryTypeId, paymentTypeId, comment,
     }) {
+      context.commit('resetErrors');
       await axios.post(`${API_BASE_URL}/api/orders`, {
         name,
         address,
@@ -248,6 +246,7 @@ export default {
         })
         .catch((error) => {
           context.commit('updateError', error.response.data.error);
+          throw error;
         });
     },
   },

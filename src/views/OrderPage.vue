@@ -117,7 +117,7 @@ export default {
       deliveryTypes: 'deliveriesData',
       payments: 'paymentsData',
       loading: 'cartProductsLoading',
-      orderInfoId: 'orderInfoId',
+      orderInfo: 'orderInfo',
       error: 'formError',
     }),
     total() {
@@ -164,18 +164,22 @@ export default {
           comment: this.formData.comment,
         })
           .then(() => {
-            if (this.error) {
-              this.formError = this.error.request;
-              this.formErrorMessage = this.error.message;
-            } else {
-              this.$router.push({ name: 'orderInfo', params: { id: this.orderInfoId } });
-            }
+            console.log(this.orderInfo.id);
+            this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
+          })
+          .catch(() => {
+            console.log(this.error);
+            this.formError = this.error.request || {};
+            this.formErrorMessage = this.error.message;
           })
           .then(() => {
             this.orderSending = false;
           });
       }, 1000);
     },
+  },
+  created() {
+    this.loadDeliveryTypes();
   },
   watch: {
     currentDeliveryTypeId(value) {
@@ -184,12 +188,6 @@ export default {
     },
     currentPaymentId(value) {
       this.currentPaymentTypeId = value;
-    },
-    $route: {
-      handler() {
-        this.loadDeliveryTypes();
-      },
-      immediate: true,
     },
   },
 };
