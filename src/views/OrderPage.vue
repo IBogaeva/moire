@@ -168,7 +168,6 @@ export default {
             this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
           })
           .catch(() => {
-            console.log(this.error);
             this.formError = this.error.request || {};
             this.formErrorMessage = this.error.message;
           })

@@ -233,6 +233,7 @@ export default {
         })
         .catch((error) => {
           context.commit('updateError', error.response.data.error);
+          throw error;
         });
     },
     async loadOrderInfo(context, orderId) {
