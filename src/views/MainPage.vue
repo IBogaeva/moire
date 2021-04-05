@@ -100,6 +100,7 @@ export default {
   computed: {
     ...mapGetters({
       productsData: 'productsData',
+      error: 'formError',
     }),
     products() {
       return this.productsData ? this.productsData.items : [];
