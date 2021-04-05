@@ -90,7 +90,7 @@ export default {
       minPrice,
       maxPrice,
     }) {
-      const response = await axios.get(`${API_BASE_URL}/api/products`, {
+      await axios.get(`${API_BASE_URL}/api/products`, {
         params: {
           categoryId,
           materialIds,
@@ -101,12 +101,24 @@ export default {
           minPrice,
           maxPrice,
         },
-      });
-      context.commit('updateProductsData', response.data);
+      })
+        .then((response) => {
+          context.commit('updateProductsData', response.data);
+        })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
+          throw error;
+        });
     },
     async loadProduct(context, id) {
-      const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
-      context.commit('updateProduct', response.data);
+      await axios.get(`${API_BASE_URL}/api/products/${id}`)
+        .then((response) => {
+          context.commit('updateProduct', response.data);
+        })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
+          throw error;
+        });
     },
   },
 };

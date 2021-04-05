@@ -123,7 +123,7 @@ export default {
     total() {
       return {
         items: this.products,
-        totalPrice: this.totalPrice,
+        totalPrice: Number(this.totalPrice) + Number(this.currentDeliveryType.price),
         totalAmount: this.totalAmount,
         deliveryType: this.currentDeliveryType,
       };
@@ -164,7 +164,6 @@ export default {
           comment: this.formData.comment,
         })
           .then(() => {
-            console.log(this.orderInfo.id);
             this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
           })
           .catch(() => {
@@ -174,7 +173,7 @@ export default {
           .then(() => {
             this.orderSending = false;
           });
-      }, 1000);
+      }, 0);
     },
   },
   created() {

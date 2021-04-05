@@ -9,6 +9,16 @@
         <span class="content__info">
           {{ countProducts }} товаров
         </span>
+        <span class="content__info">
+          Кол-во товаров на странице
+        </span>
+        <label class="form__label form__label--small form__label--select">
+            <select class="form__select" type="text"
+                    name="category" v-model.number="productsPerPage">
+              <option :value="item" v-for="item in productsPerPageList" :key="item">
+                {{ item }}</option>
+            </select>
+          </label>
       </div>
     </div>
 
@@ -23,7 +33,7 @@
 
       <section class="catalog">
         <Loader v-if="productsLoading"/>
-        <div v-if="productsLoadingFailed">Произошла ошибка при загрузке товаров
+        <div v-if="productsLoadingFailed">{{ this.error.message }}
           <button @click.prevent="loadProductsData">Попробовать еще раз</button>
         </div>
         <ProductList :products="products"/>
@@ -39,10 +49,14 @@ import BasePagination from '@/components/BasePagination.vue';
 import { mapGetters } from 'vuex';
 import ProductFilter from '@/components/product/ProductFilter.vue';
 import Loader from '@/components/common/Loader.vue';
+import perPage from '@/data/perPage';
 
 export default {
   components: {
-    ProductList, BasePagination, ProductFilter, Loader,
+    ProductList,
+    BasePagination,
+    ProductFilter,
+    Loader,
   },
   data() {
     return {
@@ -54,10 +68,10 @@ export default {
         filterSeasonIds: [],
         filterColorIds: [],
       },
-      productsPerPage: 12,
       page: 1,
       productsLoading: false,
       productsLoadingFailed: false,
+      productsPerPage: 9,
     };
   },
   methods: {
@@ -76,7 +90,9 @@ export default {
           minPrice: this.customFilters.filterPriceFrom,
           maxPrice: this.customFilters.filterPriceTo,
         })
-          .catch(() => { this.productsLoadingFailed = true; })
+          .catch(() => {
+            this.productsLoadingFailed = true;
+          })
           .then(() => { this.productsLoading = false; });
       }, 0);
     },
@@ -91,9 +107,13 @@ export default {
     countProducts() {
       return this.productsData.pagination ? this.productsData.pagination.total : 0;
     },
+    productsPerPageList() {
+      return perPage;
+    },
   },
   watch: {
     page: 'loadProductsData',
+    productsPerPage: 'loadProductsData',
     customFilters: {
       handler() {
         this.loadProductsData();

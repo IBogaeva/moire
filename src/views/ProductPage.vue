@@ -137,6 +137,7 @@ export default {
       product: 'productData',
       colorId: 'colorIdData',
       sizeId: 'sizeIdData',
+      error: 'formError',
     }),
     colors() {
       return this.product.colors.map((item) => ({
@@ -166,8 +167,11 @@ export default {
       this.productLoadingFailed = false;
       clearTimeout(this.loadProductTimer);
       this.loadProductTimer = setTimeout(() => {
-        this.$store.dispatch('loadProduct', this.$route.params.id)
+        this.loadProduct(this.$route.params.id)
           .catch(() => {
+            if (this.error.code === 404 || this.error.code === 400) {
+              this.$router.push({ name: 'notFound', params: { 0: '' } });
+            }
             this.productLoadingFailed = true;
           })
           .then(() => {
@@ -176,7 +180,7 @@ export default {
           });
       }, 0);
     },
-    ...mapActions(['addProductToCart']),
+    ...mapActions(['addProductToCart', 'loadProduct']),
     addToCart() {
       this.productAdded = false;
       this.productAddSending = true;

@@ -98,6 +98,7 @@ export default {
   computed: {
     ...mapGetters({
       orderInfo: 'orderInfo',
+      error: 'formError',
     }),
     basketItems() {
       return this.orderInfo
@@ -128,7 +129,12 @@ export default {
   methods: {
     ...mapActions(['loadOrderInfo']),
     getOrderInfo(orderId) {
-      this.loadOrderInfo(orderId);
+      this.loadOrderInfo(orderId)
+        .catch(() => {
+          if (this.error.code === 0 || this.error.code === 404 || this.error.code === 400) {
+            this.$router.push({ name: 'notFound', params: { 0: '' } });
+          }
+        });
     },
   },
   watch: {

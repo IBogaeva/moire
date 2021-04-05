@@ -151,6 +151,10 @@ export default {
           context.commit('updateCartProductsData', response.data.items);
           context.commit('syncCartProducts');
         })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
+          throw error;
+        })
         .then(() => {
           context.commit('updateCartProductsLoading', false);
         });
@@ -158,7 +162,7 @@ export default {
     async addProductToCart(context, {
       id, colorId, sizeId, amount,
     }) {
-      const response = await axios.post(`${API_BASE_URL}/api/baskets/products`, {
+      await axios.post(`${API_BASE_URL}/api/baskets/products`, {
         productId: id,
         colorId,
         sizeId,
@@ -167,9 +171,15 @@ export default {
         params: {
           userAccessKey: context.rootState.userAccessKey,
         },
-      });
-      context.commit('updateCartProductsData', response.data.items);
-      context.commit('syncCartProducts');
+      })
+        .then((response) => {
+          context.commit('updateCartProductsData', response.data.items);
+          context.commit('syncCartProducts');
+        })
+        .catch((error) => {
+          context.commit('updateError', error.response.data.error);
+          throw error;
+        });
     },
     async updateCartProductAmount(context, { id, productId, amount }) {
       context.commit('updateCartProductAmount', { productId, amount });
@@ -187,8 +197,10 @@ export default {
         .then((response) => {
           context.commit('updateCartProductsData', response.data.items);
         })
-        .catch(() => {
+        .catch((error) => {
           context.commit('syncCartProducts');
+          context.commit('updateError', error.response.data.error);
+          throw error;
         });
     },
     async deleteCartProduct(context, id) {
@@ -206,8 +218,10 @@ export default {
           context.commit('updateCartProductsData', response.data.items, id);
           context.commit('syncCartProducts');
         })
-        .catch(() => {
+        .catch((error) => {
           context.commit('syncCartProducts');
+          context.commit('updateError', error.response.data.error);
+          throw error;
         });
     },
     async order(context, {
