@@ -269,6 +269,7 @@ export default {
         })
         .catch((error) => {
           context.commit('updateError', error.response.data.error);
+          context.commit('unlockUi');
           throw error;
         })
         .then(() => {
