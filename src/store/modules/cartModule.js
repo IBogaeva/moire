@@ -182,6 +182,7 @@ export default {
         });
     },
     async updateCartProductAmount(context, { id, productId, amount }) {
+      context.commit('lockUi');
       context.commit('updateCartProductAmount', { productId, amount });
       if (amount < 1) {
         return;
@@ -196,14 +197,17 @@ export default {
       })
         .then((response) => {
           context.commit('updateCartProductsData', response.data.items);
+          context.commit('unlockUi');
         })
         .catch((error) => {
           context.commit('syncCartProducts');
           context.commit('updateError', error.response.data.error);
+          context.commit('unlockUi');
           throw error;
         });
     },
     async deleteCartProduct(context, id) {
+      context.commit('lockUi');
       await axios.request({
         method: 'delete',
         url: `${API_BASE_URL}/api/baskets/products`,
@@ -217,10 +221,12 @@ export default {
         .then((response) => {
           context.commit('updateCartProductsData', response.data.items, id);
           context.commit('syncCartProducts');
+          context.commit('unlockUi');
         })
         .catch((error) => {
           context.commit('syncCartProducts');
           context.commit('updateError', error.response.data.error);
+          context.commit('unlockUi');
           throw error;
         });
     },

@@ -1,4 +1,6 @@
 <template>
+  <div>
+  <Loader v-if="isUiLocked"/>
   <li class="cart__item product">
     <div class="product__pic">
       <img :src="image" width="120" height="120"
@@ -33,20 +35,25 @@
       </svg>
     </button>
   </li>
+  </div>
 </template>
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import AmountChange from '@/components/common/AmountChange.vue';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
   filters: {
     numberFormat,
   },
   props: ['item'],
-  components: { AmountChange },
+  components: { AmountChange, Loader },
   computed: {
+    ...mapGetters({
+      isUiLocked: 'isUiLocked',
+    }),
     amount: {
       get() {
         return this.item.amount;
