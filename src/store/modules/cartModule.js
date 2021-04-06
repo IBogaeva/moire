@@ -92,8 +92,8 @@ export default {
     deleteCartProduct(state, id) {
       state.cartProducts = state.cartProducts.filter((item) => item.id !== id);
     },
-    updateCartProductAmount(state, { productId, amount }) {
-      const item = state.cartProducts.find((it) => it.productId === productId);
+    updateCartProductAmount(state, { id, productId, amount }) {
+      const item = state.cartProducts.find((it) => (it.id === id) && (it.productId === productId));
 
       if (item) {
         item.amount = amount;
@@ -184,7 +184,7 @@ export default {
     },
     async updateCartProductAmount(context, { id, productId, amount }) {
       context.commit('lockUi');
-      context.commit('updateCartProductAmount', { productId, amount });
+      context.commit('updateCartProductAmount', { id, productId, amount });
       if (amount < 1) {
         return;
       }
