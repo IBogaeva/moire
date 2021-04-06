@@ -82,7 +82,7 @@ export default {
         productId: item.product.id,
         amount: item.quantity,
         color: item.color.color,
-        image: item.color.gallery[0],
+        image: item.color.gallery ? item.color.gallery[0] : undefined,
         size: item.size,
       }));
     },
@@ -152,6 +152,7 @@ export default {
           context.commit('syncCartProducts');
         })
         .catch((error) => {
+          console.log(error);
           context.commit('updateError', error.response.data.error);
           throw error;
         })

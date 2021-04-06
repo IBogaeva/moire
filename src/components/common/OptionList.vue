@@ -1,10 +1,12 @@
 <template>
+  <div>
   <select class="form__select" type="text"
-          name="category" v-model.number="computedId">
+          name="category" v-model.number="computedId" >
     <slot/>
     <option :value="item.id" v-for="item in list" :key="item.id">
       {{ item.title }}</option>
   </select>
+  </div>
 </template>
 
 <script>

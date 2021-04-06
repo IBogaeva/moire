@@ -70,7 +70,7 @@ export default {
       return this.item.color ? this.item.color : undefined;
     },
     image() {
-      return this.item.color ? this.item.image.file.url : undefined;
+      return this.item.image ? this.item.image.file.url : undefined;
     },
   },
   methods: {

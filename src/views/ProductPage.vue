@@ -156,7 +156,7 @@ export default {
       if (this.product.colors) {
         const color = this.product.colors
           .find((item) => item.color.id === this.currentColorId);
-        if (color) {
+        if (color && color.gallery) {
           return color.gallery[0].file.url;
         }
       }
