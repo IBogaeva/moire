@@ -25,6 +25,7 @@
     </div>
 
     <section class="cart">
+      <Loader v-if="loading"/>
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
@@ -54,12 +55,13 @@
 import { mapGetters } from 'vuex';
 import CartItem from '@/components/cart/CartItem.vue';
 import numberFormat from '@/helpers/numberFormat';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
   filters: {
     numberFormat,
   },
-  components: { CartItem },
+  components: { CartItem, Loader },
   computed: {
     ...mapGetters({
       products: 'cartDetailProducts',

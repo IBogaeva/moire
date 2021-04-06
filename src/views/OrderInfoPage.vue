@@ -25,6 +25,7 @@
     </div>
 
     <section class="cart">
+      <Loader v-if="isUiLocked"/>
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <p class="cart__message">
@@ -87,10 +88,11 @@
 import { mapGetters, mapActions } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 import OrderSummary from '@/components/order/OrderSummary.vue';
+import Loader from '@/components/common/Loader.vue';
 
 export default {
   components: {
-    OrderSummary,
+    OrderSummary, Loader,
   },
   filters: {
     numberFormat,
@@ -99,6 +101,7 @@ export default {
     ...mapGetters({
       orderInfo: 'orderInfo',
       error: 'formError',
+      isUiLocked: 'isUiLocked',
     }),
     basketItems() {
       return this.orderInfo

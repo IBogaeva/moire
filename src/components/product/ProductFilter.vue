@@ -155,7 +155,7 @@ export default {
             this.categoriesFilterLoading = false;
             this.categoriesFilterLoadingFailed = true;
           });
-      }, 10000);
+      }, 0);
     },
     loadColorsData() {
       this.colorsFilterLoading = true;
@@ -169,7 +169,7 @@ export default {
             this.colorsFilterLoading = false;
             this.colorsFilterLoadingFailed = true;
           });
-      }, 11000);
+      }, 0);
     },
     loadMaterialsData() {
       this.materialsFilterLoading = true;
@@ -183,7 +183,7 @@ export default {
             this.materialsFilterLoading = false;
             this.materialsFilterLoadingFailed = true;
           });
-      }, 12000);
+      }, 0);
     },
     loadSeasonsData() {
       this.seasonsFilterLoading = true;
@@ -197,7 +197,7 @@ export default {
             this.seasonsFilterLoading = false;
             this.seasonsFilterLoadingFailed = true;
           });
-      }, 13000);
+      }, 0);
     },
   },
   created() {

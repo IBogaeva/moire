@@ -27,7 +27,7 @@
     </div>
 
     <section class="cart">
-      <Loader v-if="orderSending"/>
+      <Loader v-if="orderSending || deliveryTypeLoading || paymentTypeLoading"/>
       <form class="cart__form form" action="#" method="POST" @submit.prevent="createOrder">
         <div class="cart__field">
           <div class="cart__data">
@@ -105,6 +105,8 @@ export default {
         comment: '',
       },
       orderSending: false,
+      deliveryTypeLoading: false,
+      paymentTypeLoading: false,
       formError: {},
       formErrorMessage: '',
     };
@@ -123,7 +125,7 @@ export default {
     total() {
       return {
         items: this.products,
-        totalPrice: Number(this.totalPrice) + Number(this.currentDeliveryType.price),
+        totalPrice: this.currentTotalPrice,
         totalAmount: this.totalAmount,
         deliveryType: this.currentDeliveryType,
       };
@@ -133,19 +135,28 @@ export default {
         ? this.deliveryTypes.find((item) => item.id === this.currentDeliveryTypeId)
         : undefined;
     },
+    currentTotalPrice() {
+      return this.currentDeliveryType
+        ? Number(this.totalPrice) + Number(this.currentDeliveryType.price)
+        : 0;
+    },
   },
   methods: {
     ...mapActions(['loadDeliveries', 'loadPayments', 'order']),
     loadDeliveryTypes() {
+      this.deliveryTypeLoading = true;
       this.loadDeliveries()
         .then(() => {
           this.currentDeliveryTypeId = this.deliveryTypes[0].id;
+          this.deliveryTypeLoading = false;
         });
     },
     loadPaymentTypes(deliveryTypeId) {
+      this.paymentTypeLoading = true;
       this.loadPayments(deliveryTypeId)
         .then(() => {
           this.currentPaymentTypeId = this.payments[0].id;
+          this.paymentTypeLoading = false;
         });
     },
     createOrder() {

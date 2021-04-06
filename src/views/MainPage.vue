@@ -32,7 +32,7 @@
                      />
 
       <section class="catalog">
-        <Loader v-if="isUiLocked"/>
+        <Loader v-if="productsLoading"/>
         <div v-if="productsLoadingFailed">{{ this.error.message }}
           <button @click.prevent="loadProductsData">Попробовать еще раз</button>
         </div>
@@ -69,12 +69,14 @@ export default {
         filterColorIds: [],
       },
       page: 1,
+      productsLoading: false,
       productsLoadingFailed: false,
       productsPerPage: 9,
     };
   },
   methods: {
     loadProductsData() {
+      this.productsLoading = true;
       this.productsLoadingFailed = false;
       clearTimeout(this.loadProductsTimer);
       this.loadProductsTimer = setTimeout(() => {
@@ -90,7 +92,8 @@ export default {
         })
           .catch(() => {
             this.productsLoadingFailed = true;
-          });
+          })
+          .then(() => { this.productsLoading = false; });
       }, 0);
     },
   },
@@ -98,7 +101,6 @@ export default {
     ...mapGetters({
       productsData: 'productsData',
       error: 'formError',
-      isUiLocked: 'isUiLocked',
     }),
     products() {
       return this.productsData ? this.productsData.items : [];

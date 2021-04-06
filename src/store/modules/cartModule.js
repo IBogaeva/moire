@@ -251,6 +251,7 @@ export default {
         });
     },
     async loadOrderInfo(context, orderId) {
+      context.commit('lockUi');
       await axios.get(`${API_BASE_URL}/api/orders/${orderId}`, {
         params: {
           userAccessKey: context.rootState.userAccessKey,
@@ -262,6 +263,9 @@ export default {
         .catch((error) => {
           context.commit('updateError', error.response.data.error);
           throw error;
+        })
+        .then(() => {
+          context.commit('unlockUi');
         });
     },
   },

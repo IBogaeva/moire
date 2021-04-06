@@ -78,6 +78,7 @@
             </button>
             <div v-show="productAdded">Товар добавлен в корзину</div>
             <div v-show="productAddSending">Добавляем товар в корзину...</div>
+            <div v-show="formErrorMessage">{{ formErrorMessage }}</div>
           </form>
         </div>
       </div>
@@ -130,6 +131,7 @@ export default {
       productAddSending: false,
       currentColorId: 0,
       currentSizeId: 0,
+      formErrorMessage: null,
     };
   },
   computed: {
@@ -184,6 +186,7 @@ export default {
     addToCart() {
       this.productAdded = false;
       this.productAddSending = true;
+      this.formErrorMessage = null;
       this.addProductToCart({
         id: this.product.id,
         colorId: this.currentColorId,
@@ -193,6 +196,10 @@ export default {
         .then(() => {
           this.productAdded = true;
           this.productAddSending = false;
+        })
+        .catch(() => {
+          this.productAddSending = false;
+          this.formErrorMessage = this.error.request || null;
         });
     },
   },
