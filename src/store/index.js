@@ -17,10 +17,14 @@ export default new Vuex.Store({
         request: {},
       }),
     },
+    lockingPool: 0,
   },
   getters: {
     formError(state) {
       return state.error;
+    },
+    isUiLocked(state) {
+      return state.lockingPool > 0;
     },
   },
   mutations: {
@@ -32,6 +36,12 @@ export default new Vuex.Store({
     },
     updateError(state, error) {
       state.error = error;
+    },
+    lockUi(state) {
+      state.lockingPool += 1;
+    },
+    unlockUi(state) {
+      state.lockingPool -= 1;
     },
   },
   actions: {

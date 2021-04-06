@@ -178,7 +178,7 @@ export default {
             this.productLoading = false;
             this.currentColorId = this.colorId;
           });
-      }, 0);
+      }, 1000);
     },
     ...mapActions(['addProductToCart', 'loadProduct']),
     addToCart() {

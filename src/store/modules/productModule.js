@@ -90,6 +90,7 @@ export default {
       minPrice,
       maxPrice,
     }) {
+      context.commit('lockUi');
       await axios.get(`${API_BASE_URL}/api/products`, {
         params: {
           categoryId,
@@ -104,9 +105,11 @@ export default {
       })
         .then((response) => {
           context.commit('updateProductsData', response.data);
+          context.commit('unlockUi');
         })
         .catch((error) => {
           context.commit('updateError', error.response.data.error);
+          context.commit('unlockUi');
           throw error;
         });
     },
