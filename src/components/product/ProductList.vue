@@ -14,8 +14,6 @@ export default {
   components: {
     ProductItem,
   },
-  props: {
-    products: [],
-  },
+  props: ['products'],
 };
 </script>

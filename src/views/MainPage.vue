@@ -46,7 +46,7 @@
 <script>
 import ProductList from '@/components/product/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import ProductFilter from '@/components/product/ProductFilter.vue';
 import Loader from '@/components/common/Loader.vue';
 import perPage from '@/data/perPage';
@@ -98,9 +98,11 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      error: (state) => state.error,
+    }),
     ...mapGetters({
       productsData: 'productsData',
-      error: 'formError',
     }),
     products() {
       return this.productsData ? this.productsData.items : [];

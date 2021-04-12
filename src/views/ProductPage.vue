@@ -108,7 +108,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import ColorList from '@/components/common/ColorList.vue';
 import numberFormat from '@/helpers/numberFormat';
 import AmountChange from '@/components/common/AmountChange.vue';
@@ -135,11 +135,13 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      error: (state) => state.error,
+    }),
     ...mapGetters({
       product: 'productData',
       colorId: 'colorIdData',
       sizeId: 'sizeIdData',
-      error: 'formError',
     }),
     colors() {
       return this.product.colors.map((item) => ({

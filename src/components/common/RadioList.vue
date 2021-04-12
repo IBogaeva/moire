@@ -20,10 +20,7 @@ export default {
   filters: {
     numberFormat, deliveryFormat,
   },
-  props: {
-    list: [],
-    currentId: [],
-  },
+  props: ['list', 'currentId'],
   computed: {
     computedId: {
       get() {

@@ -20,9 +20,6 @@ export default new Vuex.Store({
     lockingPool: 0,
   },
   getters: {
-    formError(state) {
-      return state.error;
-    },
     isUiLocked(state) {
       return state.lockingPool > 0;
     },

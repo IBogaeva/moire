@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapGetters, mapActions, mapState } from 'vuex';
 import numberFormat from '@/helpers/numberFormat';
 import OrderSummary from '@/components/order/OrderSummary.vue';
 import Loader from '@/components/common/Loader.vue';
@@ -98,9 +98,11 @@ export default {
     numberFormat,
   },
   computed: {
+    ...mapState({
+      orderInfo: (state) => state.cart.orderInfo,
+      error: (state) => state.error,
+    }),
     ...mapGetters({
-      orderInfo: 'orderInfo',
-      error: 'formError',
       isUiLocked: 'isUiLocked',
     }),
     basketItems() {

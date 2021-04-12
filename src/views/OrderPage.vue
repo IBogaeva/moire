@@ -25,7 +25,6 @@
         </h1>
       </div>
     </div>
-
     <section class="cart">
       <Loader v-if="orderSending || deliveryTypeLoading || paymentTypeLoading"/>
       <form class="cart__form form" action="#" method="POST" @submit.prevent="createOrder">
@@ -44,14 +43,13 @@
                           v-model="formData.email" :error="formError.email" type="email"/>
 
             <BaseFormTextarea title="Комментарий к заказу" :error="formError.comment"
-                             placeholder="Ваши пожелания"
-                             v-model="formData.comment"/>
+                              placeholder="Ваши пожелания"
+                              v-model="formData.comment"/>
           </div>
-
           <div class="cart__options">
             <h3 class="cart__title">Доставка</h3>
-             <RadioList :list="deliveryTypes" :current-id.sync="currentDeliveryTypeId"
-                        name='delivery'/>
+            <RadioList :list="deliveryTypes" :current-id.sync="currentDeliveryTypeId"
+                       name='delivery'/>
 
             <h3 class="cart__title">Оплата</h3>
             <RadioList :list="payments" :current-id.sync="currentPaymentTypeId" name='payment'/>
@@ -70,28 +68,29 @@
         </div>
       </form>
     </section>
+
   </main>
 </template>
 
 <script>
 import numberFormat from '@/helpers/numberFormat';
-import { mapGetters, mapActions } from 'vuex';
-import OrderSummary from '@/components/order/OrderSummary.vue';
-import RadioList from '@/components/common/RadioList.vue';
+import { mapGetters, mapActions, mapState } from 'vuex';
+import Loader from '@/components/common/Loader.vue';
 import BaseFormText from '@/components/common/BaseFormText.vue';
 import BaseFormTextarea from '@/components/common/BaseFormTextarea.vue';
-import Loader from '@/components/common/Loader.vue';
+import RadioList from '@/components/common/RadioList.vue';
+import OrderSummary from '@/components/order/OrderSummary.vue';
 
 export default {
   filters: {
     numberFormat,
   },
   components: {
-    OrderSummary,
     RadioList,
     BaseFormText,
     BaseFormTextarea,
     Loader,
+    OrderSummary,
   },
   data() {
     return {
@@ -112,6 +111,10 @@ export default {
     };
   },
   computed: {
+    ...mapState({
+      orderInfo: (state) => state.cart.orderInfo,
+      error: (state) => state.error,
+    }),
     ...mapGetters({
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice',
@@ -119,8 +122,6 @@ export default {
       deliveryTypes: 'deliveriesData',
       payments: 'paymentsData',
       loading: 'cartProductsLoading',
-      orderInfo: 'orderInfo',
-      error: 'formError',
     }),
     total() {
       return {

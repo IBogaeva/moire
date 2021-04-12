@@ -71,9 +71,6 @@ export default {
     cartProductsLoading(state) {
       return state.cartProductsLoading;
     },
-    orderInfo(state) {
-      return state.orderInfo;
-    },
   },
   actions: {
     async loadCart(context) {
