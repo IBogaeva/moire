@@ -84,11 +84,11 @@ export default {
         }
         context.commit('updateCartProductsData', response.data.items);
         context.commit('syncCartProducts');
-        context.commit('updateCartProductsLoading', false);
       } catch (error) {
         context.commit('updateError', error.response.data.error);
         throw error;
       }
+      context.commit('updateCartProductsLoading', false);
     },
     async addProductToCart(context, {
       id, colorId, sizeId, amount,
@@ -127,13 +127,12 @@ export default {
           },
         });
         context.commit('updateCartProductsData', response.data.items);
-        context.commit('unlockUi');
       } catch (error) {
         context.commit('syncCartProducts');
         context.commit('updateError', error.response.data.error);
-        context.commit('unlockUi');
         throw error;
       }
+      context.commit('unlockUi');
     },
     async deleteCartProduct(context, id) {
       context.commit('lockUi');
@@ -149,14 +148,12 @@ export default {
           },
         });
         context.commit('updateCartProductsData', response.data.items, id);
-        context.commit('syncCartProducts');
-        context.commit('unlockUi');
       } catch (error) {
-        context.commit('syncCartProducts');
         context.commit('updateError', error.response.data.error);
-        context.commit('unlockUi');
         throw error;
       }
+      context.commit('syncCartProducts');
+      context.commit('unlockUi');
     },
     async order(context, {
       name, address, phone, email, deliveryTypeId, paymentTypeId, comment,
@@ -192,12 +189,11 @@ export default {
           },
         });
         context.commit('updateOrderInfo', response.data);
-        context.commit('unlockUi');
       } catch (error) {
         context.commit('updateError', error.response.data.error);
-        context.commit('unlockUi');
         throw error;
       }
+      context.commit('unlockUi');
     },
   },
 };

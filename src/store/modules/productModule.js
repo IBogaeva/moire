@@ -62,12 +62,11 @@ export default {
           },
         });
         context.commit('updateProductsData', response.data);
-        context.commit('unlockUi');
       } catch (error) {
         context.commit('updateError', error.response.data.error);
-        context.commit('unlockUi');
         throw error;
       }
+      context.commit('unlockUi');
     },
     async loadProduct(context, id) {
       try {
