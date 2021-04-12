@@ -29,42 +29,7 @@ export default {
     numberFormat,
   },
   props: {
-    product: {
-      colors: [{
-        color: {
-          code: Number,
-          id: Number,
-          title: String,
-        },
-        gallery: [{
-          file: {
-            extension: String,
-            name: String,
-            originalName: String,
-            size: String,
-            url: String,
-          },
-          id: Number,
-        }],
-        id: Number,
-      }],
-      id: Number,
-      materials: [{
-        code: String,
-        id: Number,
-        productsCount: Number,
-        title: String,
-      }],
-      price: Number,
-      seasons: [{
-        code: String,
-        id: Number,
-        productsCount: Number,
-        title: String,
-      }],
-      slug: String,
-      title: String,
-    },
+    product: {},
   },
   data() {
     return {

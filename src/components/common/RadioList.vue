@@ -21,8 +21,8 @@ export default {
     numberFormat, deliveryFormat,
   },
   props: {
-    list: Array,
-    currentId: Number,
+    list: [],
+    currentId: [],
   },
   computed: {
     computedId: {

@@ -8,50 +8,7 @@ Vue.use(Vuex);
 export default {
   state: {
     productsData: null,
-    productData: {
-      category: {
-        id: Number,
-        slug: String,
-        title: String,
-      },
-      colors: [{
-        color: {
-          code: String,
-          id: Number,
-          title: String,
-        },
-        gallery: [{
-          file: {
-            extension: String,
-            name: String,
-            originalName: String,
-            size: String,
-            url: String,
-          },
-        }],
-      }],
-      content: String,
-      id: Number,
-      materials: [{
-        code: String,
-        id: Number,
-        productsCount: Number,
-        title: String,
-      }],
-      price: Number,
-      seasons: [{
-        code: String,
-        id: Number,
-        productsCount: Number,
-        title: String,
-      }],
-      sizes: [{
-        id: Number,
-        title: String,
-      }],
-      slug: String,
-      title: String,
-    },
+    productData: {},
   },
   mutations: {
     updateProductsData(state, products) {

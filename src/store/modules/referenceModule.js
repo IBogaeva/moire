@@ -7,45 +7,12 @@ Vue.use(Vuex);
 
 export default {
   state: {
-    categoriesData: {
-      items: [{
-        id: 0,
-        title: String,
-        slug: String,
-      }],
-    },
-    colorsData: {
-      items: [{
-        id: 0,
-        title: String,
-        code: String,
-      }],
-    },
-    materialsData: {
-      items: [{
-        id: 0,
-        title: String,
-        code: String,
-        productsCount: Number,
-      }],
-    },
-    seasonsData: {
-      items: [{
-        id: 0,
-        title: String,
-        code: String,
-        productsCount: Number,
-      }],
-    },
-    deliveriesData: [{
-      id: 0,
-      title: String,
-      price: Number,
-    }],
-    paymentsData: [{
-      id: 0,
-      title: String,
-    }],
+    categoriesData: {},
+    colorsData: {},
+    materialsData: {},
+    seasonsData: {},
+    deliveriesData: [],
+    paymentsData: [],
   },
   mutations: {
     updateCategoriesData(state, categories) {

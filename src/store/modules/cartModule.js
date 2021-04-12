@@ -7,67 +7,7 @@ Vue.use(Vuex);
 
 export default {
   state: {
-    cartProductsData: [{
-      id: Number,
-      price: Number,
-      quantity: Number,
-      color: {
-        id: Number,
-        color: {
-          id: Number,
-          title: String,
-          code: String,
-        },
-        gallery: [{
-          file: {
-            extension: String,
-            name: String,
-            originalName: String,
-            size: String,
-            url: String,
-          },
-        }],
-      },
-      product: {
-        colors: [{
-          id: Number,
-          color: {
-            code: String,
-            id: Number,
-            title: String,
-          },
-          gallery: [{
-            file: {
-              extension: String,
-              name: String,
-              originalName: String,
-              size: String,
-              url: String,
-            },
-          }],
-        }],
-        id: Number,
-        materials: [{
-          code: String,
-          id: Number,
-          productsCount: Number,
-          title: String,
-        }],
-        price: Number,
-        seasons: [{
-          code: String,
-          id: Number,
-          productsCount: Number,
-          title: String,
-        }],
-        slug: String,
-        title: String,
-      },
-      size: {
-        id: Number,
-        title: String,
-      },
-    }],
+    cartProductsData: [],
     cartProducts: [],
     cartProductsLoading: true,
     orderInfo: null,

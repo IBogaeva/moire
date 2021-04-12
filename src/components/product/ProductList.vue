@@ -15,7 +15,7 @@ export default {
     ProductItem,
   },
   props: {
-    products: Array,
+    products: [],
   },
 };
 </script>
