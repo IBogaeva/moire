@@ -67,33 +67,33 @@ export default {
     },
   },
   actions: {
-    async loadCategories(context) {
+    async loadCategories({ commit }) {
       const response = await axios.get(`${API_BASE_URL}/api/productCategories`);
-      context.commit('updateCategoriesData', response.data);
+      commit('updateCategoriesData', response.data);
     },
-    async loadColors(context) {
+    async loadColors({ commit }) {
       const response = await axios.get(`${API_BASE_URL}/api/colors`);
-      context.commit('updateColorsData', response.data);
+      commit('updateColorsData', response.data);
     },
-    async loadMaterials(context) {
+    async loadMaterials({ commit }) {
       const response = await axios.get(`${API_BASE_URL}/api/materials`);
-      context.commit('updateMaterialsData', response.data);
+      commit('updateMaterialsData', response.data);
     },
-    async loadSeasons(context) {
+    async loadSeasons({ commit }) {
       const response = await axios.get(`${API_BASE_URL}/api/seasons`);
-      context.commit('updateSeasonsData', response.data);
+      commit('updateSeasonsData', response.data);
     },
-    async loadDeliveries(context) {
+    async loadDeliveries({ commit }) {
       const response = await axios.get(`${API_BASE_URL}/api/deliveries`);
-      context.commit('updateDeliveriesData', response.data);
+      commit('updateDeliveriesData', response.data);
     },
-    async loadPayments(context, deliveryTypeId) {
+    async loadPayments({ commit }, deliveryTypeId) {
       const response = await axios.get(`${API_BASE_URL}/api/payments`, {
         params: {
           deliveryTypeId,
         },
       });
-      context.commit('updatePaymentsData', response.data);
+      commit('updatePaymentsData', response.data);
     },
   },
 };

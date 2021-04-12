@@ -37,7 +37,7 @@ export default {
     },
   },
   actions: {
-    async loadProducts(context, {
+    async loadProducts({ commit }, {
       page,
       limit,
       categoryId,
@@ -47,7 +47,7 @@ export default {
       minPrice,
       maxPrice,
     }) {
-      context.commit('lockUi');
+      commit('lockUi');
       try {
         const response = await axios.get(`${API_BASE_URL}/api/products`, {
           params: {
@@ -61,19 +61,20 @@ export default {
             maxPrice,
           },
         });
-        context.commit('updateProductsData', response.data);
+        commit('updateProductsData', response.data);
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi');
       }
-      context.commit('unlockUi');
     },
-    async loadProduct(context, id) {
+    async loadProduct({ commit }, id) {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
-        context.commit('updateProduct', response.data);
+        commit('updateProduct', response.data);
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
       }
     },

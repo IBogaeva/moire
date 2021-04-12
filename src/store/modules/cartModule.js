@@ -70,27 +70,28 @@ export default {
     },
   },
   actions: {
-    async loadCart(context) {
-      context.commit('updateCartProductsLoading', true);
+    async loadCart({ commit, getters }) {
+      commit('updateCartProductsLoading', true);
       try {
         const response = await axios.get(`${API_BASE_URL}/api/baskets`, {
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
         });
-        if (!context.rootState.userAccessKey) {
+        if (!getters.userAccessKey) {
           localStorage.setItem('userAccessKey', response.data.user.accessKey);
-          context.commit('updateUserAccessKey', response.data.user.accessKey);
+          commit('updateUserAccessKey', response.data.user.accessKey);
         }
-        context.commit('updateCartProductsData', response.data.items);
-        context.commit('syncCartProducts');
+        commit('updateCartProductsData', response.data.items);
+        commit('syncCartProducts');
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('updateCartProductsLoading', false);
       }
-      context.commit('updateCartProductsLoading', false);
     },
-    async addProductToCart(context, {
+    async addProductToCart({ commit, getters }, {
       id, colorId, sizeId, amount,
     }) {
       try {
@@ -101,19 +102,19 @@ export default {
           quantity: amount,
         }, {
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
         });
-        context.commit('updateCartProductsData', response.data.items);
-        context.commit('syncCartProducts');
+        commit('updateCartProductsData', response.data.items);
+        commit('syncCartProducts');
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
       }
     },
-    async updateCartProductAmount(context, { id, productId, amount }) {
-      context.commit('lockUi');
-      context.commit('updateCartProductAmount', { id, productId, amount });
+    async updateCartProductAmount({ commit, getters }, { id, productId, amount }) {
+      commit('lockUi');
+      commit('updateCartProductAmount', { id, productId, amount });
       if (amount < 1) {
         return;
       }
@@ -123,42 +124,44 @@ export default {
           quantity: amount,
         }, {
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
         });
-        context.commit('updateCartProductsData', response.data.items);
+        commit('updateCartProductsData', response.data.items);
       } catch (error) {
-        context.commit('syncCartProducts');
-        context.commit('updateError', error.response.data.error);
+        commit('syncCartProducts');
+        commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi');
       }
-      context.commit('unlockUi');
     },
-    async deleteCartProduct(context, id) {
-      context.commit('lockUi');
+    async deleteCartProduct({ commit, getters }, id) {
+      commit('lockUi');
       try {
         const response = await axios.request({
           method: 'delete',
           url: `${API_BASE_URL}/api/baskets/products`,
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
           data: {
             basketItemId: id,
           },
         });
-        context.commit('updateCartProductsData', response.data.items, id);
+        commit('updateCartProductsData', response.data.items, id);
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('syncCartProducts');
+        commit('unlockUi');
       }
-      context.commit('syncCartProducts');
-      context.commit('unlockUi');
     },
-    async order(context, {
+    async order({ commit, getters }, {
       name, address, phone, email, deliveryTypeId, paymentTypeId, comment,
     }) {
-      context.commit('resetErrors');
+      commit('resetErrors');
       try {
         const response = await axios.post(`${API_BASE_URL}/api/orders`, {
           name,
@@ -170,30 +173,31 @@ export default {
           comment,
         }, {
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
         });
-        context.commit('resetCart');
-        context.commit('updateOrderInfo', response.data);
+        commit('resetCart');
+        commit('updateOrderInfo', response.data);
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
       }
     },
-    async loadOrderInfo(context, orderId) {
-      context.commit('lockUi');
+    async loadOrderInfo({ commit, getters }, orderId) {
+      commit('lockUi');
       try {
         const response = await axios.get(`${API_BASE_URL}/api/orders/${orderId}`, {
           params: {
-            userAccessKey: context.rootState.userAccessKey,
+            userAccessKey: getters.userAccessKey,
           },
         });
-        context.commit('updateOrderInfo', response.data);
+        commit('updateOrderInfo', response.data);
       } catch (error) {
-        context.commit('updateError', error.response.data.error);
+        commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi');
       }
-      context.commit('unlockUi');
     },
   },
 };

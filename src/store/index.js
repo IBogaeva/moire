@@ -23,6 +23,9 @@ export default new Vuex.Store({
     isUiLocked(state) {
       return state.lockingPool > 0;
     },
+    userAccessKey(state) {
+      return state.userAccessKey;
+    },
   },
   mutations: {
     updateUserAccessKey(state, accessKey) {
