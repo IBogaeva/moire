@@ -14,12 +14,14 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 
 export default {
   computed: {
+    ...mapState({
+      loading: (state) => state.cart.cartProductsLoading,
+    }),
     ...mapGetters({
-      loading: 'cartProductsLoading',
       amount: 'cartTotalAmount',
     }),
   },

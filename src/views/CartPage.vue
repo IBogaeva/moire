@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 import CartItem from '@/components/cart/CartItem.vue';
 import numberFormat from '@/helpers/numberFormat';
 import Loader from '@/components/common/Loader.vue';
@@ -63,11 +63,13 @@ export default {
   },
   components: { CartItem, Loader },
   computed: {
+    ...mapState({
+      loading: (state) => state.cart.cartProductsLoading,
+    }),
     ...mapGetters({
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice',
       totalAmount: 'cartTotalAmount',
-      loading: 'cartProductsLoading',
     }),
   },
 };

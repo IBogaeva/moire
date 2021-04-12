@@ -68,9 +68,6 @@ export default {
       return getters.cartDetailProducts
         .reduce((acc, item) => item.amount + acc, 0);
     },
-    cartProductsLoading(state) {
-      return state.cartProductsLoading;
-    },
   },
   actions: {
     async loadCart(context) {

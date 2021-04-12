@@ -114,6 +114,7 @@ export default {
     ...mapState({
       orderInfo: (state) => state.cart.orderInfo,
       error: (state) => state.error,
+      loading: (state) => state.cart.cartProductsLoading,
     }),
     ...mapGetters({
       products: 'cartDetailProducts',
@@ -121,7 +122,6 @@ export default {
       totalAmount: 'cartTotalAmount',
       deliveryTypes: 'deliveriesData',
       payments: 'paymentsData',
-      loading: 'cartProductsLoading',
     }),
     total() {
       return {
