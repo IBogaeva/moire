@@ -26,7 +26,7 @@
       </div>
     </div>
     <section class="cart">
-      <Loader v-if="orderSending || deliveryTypeLoading || paymentTypeLoading"/>
+      <Loader v-if="isUiLocked"/>
       <form class="cart__form form" action="#" method="POST" @submit.prevent="createOrder">
         <div class="cart__field">
           <div class="cart__data">
@@ -103,9 +103,6 @@ export default {
         email: '',
         comment: '',
       },
-      orderSending: false,
-      deliveryTypeLoading: false,
-      paymentTypeLoading: false,
       formError: {},
       formErrorMessage: '',
     };
@@ -114,7 +111,6 @@ export default {
     ...mapState({
       orderInfo: (state) => state.cart.orderInfo,
       error: (state) => state.error,
-      loading: (state) => state.cart.cartProductsLoading,
     }),
     ...mapGetters({
       products: 'cartDetailProducts',
@@ -122,6 +118,7 @@ export default {
       totalAmount: 'cartTotalAmount',
       deliveryTypes: 'deliveriesData',
       payments: 'paymentsData',
+      isUiLocked: 'isUiLocked',
     }),
     total() {
       return {
@@ -145,47 +142,36 @@ export default {
   methods: {
     ...mapActions(['loadDeliveries', 'loadPayments', 'order']),
     loadDeliveryTypes() {
-      this.deliveryTypeLoading = true;
       this.loadDeliveries()
         .then(() => {
           this.currentDeliveryTypeId = this.deliveryTypes[0].id;
-          this.deliveryTypeLoading = false;
         });
     },
     loadPaymentTypes(deliveryTypeId) {
-      this.paymentTypeLoading = true;
       this.loadPayments(deliveryTypeId)
         .then(() => {
           this.currentPaymentTypeId = this.payments[0].id;
-          this.paymentTypeLoading = false;
         });
     },
     createOrder() {
       this.formError = {};
       this.formErrorMessage = '';
-      this.orderSending = true;
-      clearTimeout(this.orderSendingTimer);
-      this.orderSendingTimer = setTimeout(() => {
-        this.order({
-          name: this.formData.name,
-          address: this.formData.address,
-          phone: this.formData.phone,
-          email: this.formData.email,
-          deliveryTypeId: this.currentDeliveryTypeId,
-          paymentTypeId: this.currentPaymentTypeId,
-          comment: this.formData.comment,
+      this.order({
+        name: this.formData.name,
+        address: this.formData.address,
+        phone: this.formData.phone,
+        email: this.formData.email,
+        deliveryTypeId: this.currentDeliveryTypeId,
+        paymentTypeId: this.currentPaymentTypeId,
+        comment: this.formData.comment,
+      })
+        .then(() => {
+          this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
         })
-          .then(() => {
-            this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
-          })
-          .catch(() => {
-            this.formError = this.error.request || {};
-            this.formErrorMessage = this.error.message;
-          })
-          .then(() => {
-            this.orderSending = false;
-          });
-      }, 0);
+        .catch(() => {
+          this.formError = this.error.request || {};
+          this.formErrorMessage = this.error.message;
+        });
     },
   },
   created() {

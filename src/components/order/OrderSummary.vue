@@ -27,20 +27,20 @@ export default {
   },
   props: {
     data: {
-      type: Object,
-      default: () => ({
+      default: {
         items: [],
         totalAmount: null,
         totalPrice: null,
-      }),
+      },
     },
     deliveryType: {
-      type: Object,
-      default: () => ({
-        id: 0,
-        price: 0,
-        title: null,
-      }),
+      default() {
+        return {
+          id: 0,
+          price: 0,
+          title: '',
+        };
+      },
     },
   },
 };

@@ -10,12 +10,9 @@ export default new Vuex.Store({
   state: {
     userAccessKey: null,
     error: {
-      type: Object,
-      default: () => ({
-        message: '',
-        code: Number,
-        request: {},
-      }),
+      message: '',
+      code: Number,
+      request: {},
     },
     lockingPool: 0,
   },

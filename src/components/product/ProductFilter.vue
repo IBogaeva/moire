@@ -1,7 +1,7 @@
 <template>
   <aside class="filter">
     <h2 class="filter__title">Фильтр</h2>
-    <Loader v-if="filtersLoading"/>
+    <Loader v-if="isUiLocked"/>
     <form class="filter__form form" action="#" method="get" @submit.prevent="submit">
       <fieldset class="form__block">
         <legend class="form__legend">Цена</legend>
@@ -15,8 +15,7 @@
         </label>
       </fieldset>
 
-      <fieldset class="form__block"
-                v-show="!categoriesFilterLoading && !categoriesFilterLoadingFailed">
+      <fieldset class="form__block">
         <legend class="form__legend">Категория</legend>
         <label class="form__label form__label--select">
           <OptionList :list="categories" :current-id.sync="currentCategoryId">
@@ -25,8 +24,7 @@
         </label>
       </fieldset>
 
-      <fieldset class="form__block"
-                v-show="!colorsFilterLoading && !colorsFilterLoadingFailed">
+      <fieldset class="form__block">
         <legend class="form__legend">Цвет</legend>
         <ul class="colors colors--black">
           <li class="colors__item"  v-for="item in colors" :key="item.id">
@@ -40,13 +38,12 @@
         </ul>
       </fieldset>
 
-      <fieldset class="form__block"
-                v-show="!materialsFilterLoading && !materialsFilterLoadingFailed">
+      <fieldset class="form__block">
         <legend class="form__legend">Материал</legend>
         <CheckList :current-ids.sync="currentMaterialIds" :list="materials"/>
       </fieldset>
 
-      <fieldset v-show="!seasonsFilterLoading && !seasonsFilterLoadingFailed" class="form__block">
+      <fieldset class="form__block">
         <legend class="form__legend">Коллекция</legend>
         <CheckList :current-ids.sync="currentSeasonIds" :list="seasons"/>
       </fieldset>
@@ -81,14 +78,6 @@ export default {
       currentMaterialIds: [],
       currentSeasonIds: [],
       currentColorIds: [],
-      seasonsFilterLoading: false,
-      categoriesFilterLoading: false,
-      colorsFilterLoading: false,
-      materialsFilterLoading: false,
-      seasonsFilterLoadingFailed: false,
-      categoriesFilterLoadingFailed: false,
-      colorsFilterLoadingFailed: false,
-      materialsFilterLoadingFailed: false,
     };
   },
   computed: {
@@ -97,6 +86,7 @@ export default {
       colors: 'colorsData',
       materials: 'materialsData',
       seasons: 'seasonsData',
+      isUiLocked: 'isUiLocked',
     }),
     isFilterSet() {
       return this.currentCategoryId > 0
@@ -105,12 +95,6 @@ export default {
         || this.currentMaterialIds.length > 0
         || this.currentSeasonIds.length > 0
         || this.currentColorIds.length > 0;
-    },
-    filtersLoading() {
-      return this.seasonsFilterLoading
-        || this.categoriesFilterLoading
-        || this.colorsFilterLoading
-        || this.materialsFilterLoading;
     },
   },
   methods: {
@@ -142,69 +126,12 @@ export default {
       'loadMaterials',
       'loadSeasons',
     ]),
-    loadCategoriesData() {
-      this.categoriesFilterLoading = true;
-      this.categoriesFilterLoadingFailed = false;
-      clearTimeout(this.loadCategoriesTimer);
-      this.loadCategoriesTimer = setTimeout(() => {
-        this.loadCategories()
-          .then(() => {
-            this.categoriesFilterLoading = false;
-          })
-          .catch(() => {
-            this.categoriesFilterLoading = false;
-            this.categoriesFilterLoadingFailed = true;
-          });
-      }, 0);
-    },
-    loadColorsData() {
-      this.colorsFilterLoading = true;
-      this.colorsFilterLoadingFailed = false;
-      clearTimeout(this.loadColorsTimer);
-      this.loadColorsTimer = setTimeout(() => {
-        this.loadColors()
-          .then(() => {
-            this.colorsFilterLoading = false;
-          }).catch(() => {
-            this.colorsFilterLoading = false;
-            this.colorsFilterLoadingFailed = true;
-          });
-      }, 0);
-    },
-    loadMaterialsData() {
-      this.materialsFilterLoading = true;
-      this.materialsFilterLoadingFailed = false;
-      clearTimeout(this.loadMaterialsTimer);
-      this.loadMaterialsTimer = setTimeout(() => {
-        this.loadMaterials()
-          .then(() => {
-            this.materialsFilterLoading = false;
-          }).catch(() => {
-            this.materialsFilterLoading = false;
-            this.materialsFilterLoadingFailed = true;
-          });
-      }, 0);
-    },
-    loadSeasonsData() {
-      this.seasonsFilterLoading = true;
-      this.seasonsFilterLoadingFailed = false;
-      clearTimeout(this.loadSeasonsTimer);
-      this.loadSeasonsTimer = setTimeout(() => {
-        this.loadSeasons()
-          .then(() => {
-            this.seasonsFilterLoading = false;
-          }).catch(() => {
-            this.seasonsFilterLoading = false;
-            this.seasonsFilterLoadingFailed = true;
-          });
-      }, 0);
-    },
   },
   created() {
-    this.loadCategoriesData();
-    this.loadColorsData();
-    this.loadMaterialsData();
-    this.loadSeasonsData();
+    this.loadCategories();
+    this.loadColors();
+    this.loadMaterials();
+    this.loadSeasons();
   },
 };
 </script>

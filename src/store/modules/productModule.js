@@ -47,7 +47,7 @@ export default {
       minPrice,
       maxPrice,
     }) {
-      commit('lockUi');
+      commit('lockUi', { root: true });
       try {
         const response = await axios.get(`${API_BASE_URL}/api/products`, {
           params: {
@@ -66,16 +66,19 @@ export default {
         commit('updateError', error.response.data.error);
         throw error;
       } finally {
-        commit('unlockUi');
+        commit('unlockUi', { root: true });
       }
     },
     async loadProduct({ commit }, id) {
+      commit('lockUi', { root: true });
       try {
         const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
         commit('updateProduct', response.data);
       } catch (error) {
         commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi', { root: true });
       }
     },
   },

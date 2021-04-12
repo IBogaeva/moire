@@ -1,6 +1,6 @@
 <template>
-  <main class="content container" v-if="productLoading">
-    <Loader v-if="productLoading"/>
+  <main class="content container" v-if="isUiLocked">
+    <Loader v-if="isUiLocked"/>
   </main>
   <main v-else-if="!product">
   Не удалось загрузить товар
@@ -125,7 +125,6 @@ export default {
   data() {
     return {
       productAmount: 1,
-      productLoading: false,
       productLoadingFailed: false,
       productAdded: false,
       productAddSending: false,
@@ -142,6 +141,7 @@ export default {
       product: 'productData',
       colorId: 'colorIdData',
       sizeId: 'sizeIdData',
+      isUiLocked: 'isUiLocked',
     }),
     colors() {
       return this.product.colors.map((item) => ({
@@ -149,7 +149,7 @@ export default {
       }));
     },
     images() {
-      return this.product.colors
+      return (this.product.colors && this.product.colors.gallery)
         ? this.product.colors
           .find((item) => item.color.id === this.currentColorId).gallery
         : [];
@@ -167,22 +167,17 @@ export default {
   },
   methods: {
     loadProductData() {
-      this.productLoading = true;
       this.productLoadingFailed = false;
-      clearTimeout(this.loadProductTimer);
-      this.loadProductTimer = setTimeout(() => {
-        this.loadProduct(this.$route.params.id)
-          .catch(() => {
-            if (this.error.code === 404 || this.error.code === 400) {
-              this.$router.push({ name: 'notFound', params: { 0: '' } });
-            }
-            this.productLoadingFailed = true;
-          })
-          .then(() => {
-            this.productLoading = false;
-            this.currentColorId = this.colorId;
-          });
-      }, 1000);
+      this.loadProduct(this.$route.params.id)
+        .catch(() => {
+          if (this.error.code === 404 || this.error.code === 400) {
+            this.$router.push({ name: 'notFound', params: { 0: '' } });
+          }
+          this.productLoadingFailed = true;
+        })
+        .then(() => {
+          this.currentColorId = this.colorId;
+        });
     },
     ...mapActions(['addProductToCart', 'loadProduct']),
     addToCart() {

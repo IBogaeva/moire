@@ -25,7 +25,7 @@
     </div>
 
     <section class="cart">
-      <Loader v-if="loading"/>
+      <Loader v-if="isUiLocked"/>
       <form class="cart__form form" action="#" method="POST">
         <div class="cart__field">
           <ul class="cart__list">
@@ -52,7 +52,7 @@
 </template>
 
 <script>
-import { mapGetters, mapState } from 'vuex';
+import { mapGetters } from 'vuex';
 import CartItem from '@/components/cart/CartItem.vue';
 import numberFormat from '@/helpers/numberFormat';
 import Loader from '@/components/common/Loader.vue';
@@ -63,13 +63,11 @@ export default {
   },
   components: { CartItem, Loader },
   computed: {
-    ...mapState({
-      loading: (state) => state.cart.cartProductsLoading,
-    }),
     ...mapGetters({
       products: 'cartDetailProducts',
       totalPrice: 'cartTotalPrice',
       totalAmount: 'cartTotalAmount',
+      isUiLocked: 'isUiLocked',
     }),
   },
 };

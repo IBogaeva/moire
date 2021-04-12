@@ -68,32 +68,74 @@ export default {
   },
   actions: {
     async loadCategories({ commit }) {
-      const response = await axios.get(`${API_BASE_URL}/api/productCategories`);
-      commit('updateCategoriesData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/productCategories`);
+        commit('updateCategoriesData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
     async loadColors({ commit }) {
-      const response = await axios.get(`${API_BASE_URL}/api/colors`);
-      commit('updateColorsData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/colors`);
+        commit('updateColorsData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
     async loadMaterials({ commit }) {
-      const response = await axios.get(`${API_BASE_URL}/api/materials`);
-      commit('updateMaterialsData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/materials`);
+        commit('updateMaterialsData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
     async loadSeasons({ commit }) {
-      const response = await axios.get(`${API_BASE_URL}/api/seasons`);
-      commit('updateSeasonsData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/seasons`);
+        commit('updateSeasonsData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
     async loadDeliveries({ commit }) {
-      const response = await axios.get(`${API_BASE_URL}/api/deliveries`);
-      commit('updateDeliveriesData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/deliveries`);
+        commit('updateDeliveriesData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
     async loadPayments({ commit }, deliveryTypeId) {
-      const response = await axios.get(`${API_BASE_URL}/api/payments`, {
-        params: {
-          deliveryTypeId,
-        },
-      });
-      commit('updatePaymentsData', response.data);
+      commit('lockUi', { root: true });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/payments`, {
+          params: {
+            deliveryTypeId,
+          },
+        });
+        commit('updatePaymentsData', response.data);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        commit('unlockUi', { root: true });
+      }
     },
   },
 };

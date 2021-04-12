@@ -9,7 +9,6 @@ export default {
   state: {
     cartProductsData: [],
     cartProducts: [],
-    cartProductsLoading: true,
     orderInfo: null,
   },
   mutations: {
@@ -25,9 +24,6 @@ export default {
         image: item.color.gallery ? item.color.gallery[0] : undefined,
         size: item.size,
       }));
-    },
-    updateCartProductsLoading(state, loading) {
-      state.cartProductsLoading = loading;
     },
     deleteCartProduct(state, id) {
       state.cartProducts = state.cartProducts.filter((item) => item.id !== id);
@@ -71,7 +67,7 @@ export default {
   },
   actions: {
     async loadCart({ commit, getters }) {
-      commit('updateCartProductsLoading', true);
+      commit('lockUi', { root: true });
       try {
         const response = await axios.get(`${API_BASE_URL}/api/baskets`, {
           params: {
@@ -88,12 +84,13 @@ export default {
         commit('updateError', error.response.data.error);
         throw error;
       } finally {
-        commit('updateCartProductsLoading', false);
+        commit('unlockUi', { root: true });
       }
     },
     async addProductToCart({ commit, getters }, {
       id, colorId, sizeId, amount,
     }) {
+      commit('lockUi', { root: true });
       try {
         const response = await axios.post(`${API_BASE_URL}/api/baskets/products`, {
           productId: id,
@@ -110,10 +107,12 @@ export default {
       } catch (error) {
         commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi', { root: true });
       }
     },
     async updateCartProductAmount({ commit, getters }, { id, productId, amount }) {
-      commit('lockUi');
+      commit('lockUi', { root: true });
       commit('updateCartProductAmount', { id, productId, amount });
       if (amount < 1) {
         return;
@@ -133,11 +132,11 @@ export default {
         commit('updateError', error.response.data.error);
         throw error;
       } finally {
-        commit('unlockUi');
+        commit('unlockUi', { root: true });
       }
     },
     async deleteCartProduct({ commit, getters }, id) {
-      commit('lockUi');
+      commit('lockUi', { root: true });
       try {
         const response = await axios.request({
           method: 'delete',
@@ -155,13 +154,14 @@ export default {
         throw error;
       } finally {
         commit('syncCartProducts');
-        commit('unlockUi');
+        commit('unlockUi', { root: true });
       }
     },
     async order({ commit, getters }, {
       name, address, phone, email, deliveryTypeId, paymentTypeId, comment,
     }) {
       commit('resetErrors');
+      commit('lockUi', { root: true });
       try {
         const response = await axios.post(`${API_BASE_URL}/api/orders`, {
           name,
@@ -181,10 +181,12 @@ export default {
       } catch (error) {
         commit('updateError', error.response.data.error);
         throw error;
+      } finally {
+        commit('unlockUi', { root: true });
       }
     },
     async loadOrderInfo({ commit, getters }, orderId) {
-      commit('lockUi');
+      commit('lockUi', { root: true });
       try {
         const response = await axios.get(`${API_BASE_URL}/api/orders/${orderId}`, {
           params: {
@@ -196,7 +198,7 @@ export default {
         commit('updateError', error.response.data.error);
         throw error;
       } finally {
-        commit('unlockUi');
+        commit('unlockUi', { root: true });
       }
     },
   },
