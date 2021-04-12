@@ -48,37 +48,35 @@ export default {
       maxPrice,
     }) {
       context.commit('lockUi');
-      await axios.get(`${API_BASE_URL}/api/products`, {
-        params: {
-          categoryId,
-          materialIds,
-          seasonIds,
-          colorIds,
-          page,
-          limit,
-          minPrice,
-          maxPrice,
-        },
-      })
-        .then((response) => {
-          context.commit('updateProductsData', response.data);
-          context.commit('unlockUi');
-        })
-        .catch((error) => {
-          context.commit('updateError', error.response.data.error);
-          context.commit('unlockUi');
-          throw error;
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/products`, {
+          params: {
+            categoryId,
+            materialIds,
+            seasonIds,
+            colorIds,
+            page,
+            limit,
+            minPrice,
+            maxPrice,
+          },
         });
+        context.commit('updateProductsData', response.data);
+        context.commit('unlockUi');
+      } catch (error) {
+        context.commit('updateError', error.response.data.error);
+        context.commit('unlockUi');
+        throw error;
+      }
     },
     async loadProduct(context, id) {
-      await axios.get(`${API_BASE_URL}/api/products/${id}`)
-        .then((response) => {
-          context.commit('updateProduct', response.data);
-        })
-        .catch((error) => {
-          context.commit('updateError', error.response.data.error);
-          throw error;
-        });
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/products/${id}`);
+        context.commit('updateProduct', response.data);
+      } catch (error) {
+        context.commit('updateError', error.response.data.error);
+        throw error;
+      }
     },
   },
 };
