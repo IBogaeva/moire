@@ -166,38 +166,37 @@ export default {
     },
   },
   methods: {
-    loadProductData() {
-      this.productLoadingFailed = false;
-      this.loadProduct(this.$route.params.id)
-        .catch(() => {
-          if (this.error.code === 404 || this.error.code === 400) {
-            this.$router.replace({ name: 'notFound', params: { 0: '' } });
-          }
-          this.productLoadingFailed = true;
-        })
-        .then(() => {
-          this.currentColorId = this.colorId;
-        });
-    },
     ...mapActions(['addProductToCart', 'loadProduct']),
-    addToCart() {
+    async loadProductData() {
+      this.productLoadingFailed = false;
+      try {
+        await this.loadProduct(this.$route.params.id);
+      } catch (e) {
+        if (this.error.code === 404 || this.error.code === 400) {
+          this.$router.replace({ name: 'notFound', params: { 0: '' } });
+        }
+        this.productLoadingFailed = true;
+      } finally {
+        this.currentColorId = this.colorId;
+      }
+    },
+    async addToCart() {
       this.productAdded = false;
       this.productAddSending = true;
       this.formErrorMessage = null;
-      this.addProductToCart({
-        id: this.product.id,
-        colorId: this.currentColorId,
-        sizeId: this.currentSizeId,
-        amount: this.productAmount,
-      })
-        .then(() => {
-          this.productAdded = true;
-          this.productAddSending = false;
-        })
-        .catch(() => {
-          this.productAddSending = false;
-          this.formErrorMessage = this.error.request || null;
+      try {
+        await this.addProductToCart({
+          id: this.product.id,
+          colorId: this.currentColorId,
+          sizeId: this.currentSizeId,
+          amount: this.productAmount,
         });
+        this.productAdded = true;
+        this.productAddSending = false;
+      } catch (e) {
+        this.productAddSending = false;
+        this.formErrorMessage = this.error.request || null;
+      }
     },
   },
   watch: {

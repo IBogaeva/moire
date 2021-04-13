@@ -141,37 +141,35 @@ export default {
   },
   methods: {
     ...mapActions(['loadDeliveries', 'loadPayments', 'order']),
-    loadDeliveryTypes() {
-      this.loadDeliveries()
-        .then(() => {
-          this.currentDeliveryTypeId = this.deliveryTypes[0].id;
-        });
+    async loadDeliveryTypes() {
+      await this.loadDeliveries();
+      this.currentDeliveryTypeId = this.deliveryTypes[0].id;
     },
-    loadPaymentTypes(deliveryTypeId) {
-      this.loadPayments(deliveryTypeId)
-        .then(() => {
-          this.currentPaymentTypeId = this.payments[0].id;
-        });
+    async loadPaymentTypes(deliveryTypeId) {
+      await this.loadPayments(deliveryTypeId);
+      this.currentPaymentTypeId = this.payments[0].id;
     },
-    createOrder() {
+    async createOrder() {
       this.formError = {};
       this.formErrorMessage = '';
-      this.order({
-        name: this.formData.name,
-        address: this.formData.address,
-        phone: this.formData.phone,
-        email: this.formData.email,
-        deliveryTypeId: this.currentDeliveryTypeId,
-        paymentTypeId: this.currentPaymentTypeId,
-        comment: this.formData.comment,
-      })
-        .then(() => {
-          this.$router.replace({ name: 'orderInfo', params: { id: this.orderInfo.id } });
-        })
-        .catch(() => {
-          this.formError = this.error.request || {};
-          this.formErrorMessage = this.error.message;
+      try {
+        await this.order({
+          name: this.formData.name,
+          address: this.formData.address,
+          phone: this.formData.phone,
+          email: this.formData.email,
+          deliveryTypeId: this.currentDeliveryTypeId,
+          paymentTypeId: this.currentPaymentTypeId,
+          comment: this.formData.comment,
         });
+        this.$router.push({
+          name: 'orderInfo',
+          params: { id: this.orderInfo.id },
+        });
+      } catch (e) {
+        this.formError = this.error.request || {};
+        this.formErrorMessage = this.error.message;
+      }
     },
   },
   created() {

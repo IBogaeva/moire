@@ -46,7 +46,7 @@
 <script>
 import ProductList from '@/components/product/ProductList.vue';
 import BasePagination from '@/components/BasePagination.vue';
-import { mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import ProductFilter from '@/components/product/ProductFilter.vue';
 import Loader from '@/components/common/Loader.vue';
 import perPage from '@/data/perPage';
@@ -74,11 +74,11 @@ export default {
     };
   },
   methods: {
-    loadProductsData() {
+    ...mapActions(['loadProducts']),
+    async loadProductsData() {
       this.productsLoadingFailed = false;
-      clearTimeout(this.loadProductsTimer);
-      this.loadProductsTimer = setTimeout(() => {
-        this.$store.dispatch('loadProducts', {
+      try {
+        await this.loadProducts({
           categoryId: this.customFilters.filterCategoryId,
           materialIds: this.customFilters.filterMaterialIds,
           seasonIds: this.customFilters.filterSeasonIds,
@@ -87,11 +87,10 @@ export default {
           limit: this.productsPerPage,
           minPrice: this.customFilters.filterPriceFrom,
           maxPrice: this.customFilters.filterPriceTo,
-        })
-          .catch(() => {
-            this.productsLoadingFailed = true;
-          });
-      }, 0);
+        });
+      } catch (e) {
+        this.productsLoadingFailed = true;
+      }
     },
   },
   computed: {

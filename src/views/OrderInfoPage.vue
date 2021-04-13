@@ -133,13 +133,14 @@ export default {
   },
   methods: {
     ...mapActions(['loadOrderInfo']),
-    getOrderInfo(orderId) {
-      this.loadOrderInfo(orderId)
-        .catch(() => {
-          if (this.error.code === 0 || this.error.code === 404 || this.error.code === 400) {
-            this.$router.push({ name: 'notFound', params: { 0: '' } });
-          }
-        });
+    async getOrderInfo(orderId) {
+      try {
+        await this.loadOrderInfo(orderId);
+      } catch (e) {
+        if (this.error.code === 0 || this.error.code === 404 || this.error.code === 400) {
+          this.$router.replace({ name: 'notFound', params: { 0: '' } });
+        }
+      }
     },
   },
   watch: {
