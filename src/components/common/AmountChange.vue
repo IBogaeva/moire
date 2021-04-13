@@ -28,7 +28,11 @@ export default {
         return this.currentAmount;
       },
       set(value) {
-        this.$emit('update:currentAmount', value);
+        if (typeof value === 'number') {
+          this.$emit('update:currentAmount', Math.abs(value));
+        } else {
+          this.$emit('update:currentAmount', 1);
+        }
       },
     },
   },
