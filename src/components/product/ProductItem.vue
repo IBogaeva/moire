@@ -40,15 +40,10 @@ export default {
     image() {
       const { gallery } = this.product.colors
         .find((item) => item.color.id === this.currentColorId);
-      if (gallery) {
-        return gallery[0].file.url;
-      }
-      return undefined;
+      return gallery ? gallery[0].file.url : undefined;
     },
     colors() {
-      return this.product.colors.map((item) => ({
-        ...item.color,
-      }));
+      return this.product.colors.map((item) => item.color);
     },
   },
   watch: {

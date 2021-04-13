@@ -166,7 +166,7 @@ export default {
         comment: this.formData.comment,
       })
         .then(() => {
-          this.$router.push({ name: 'orderInfo', params: { id: this.orderInfo.id } });
+          this.$router.replace({ name: 'orderInfo', params: { id: this.orderInfo.id } });
         })
         .catch(() => {
           this.formError = this.error.request || {};

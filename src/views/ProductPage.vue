@@ -171,7 +171,7 @@ export default {
       this.loadProduct(this.$route.params.id)
         .catch(() => {
           if (this.error.code === 404 || this.error.code === 400) {
-            this.$router.push({ name: 'notFound', params: { 0: '' } });
+            this.$router.replace({ name: 'notFound', params: { 0: '' } });
           }
           this.productLoadingFailed = true;
         })
