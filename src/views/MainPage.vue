@@ -23,13 +23,7 @@
     </div>
 
     <div class="content__catalog">
-      <ProductFilter :price-from.sync="customFilters.filterPriceFrom"
-                     :price-to.sync="customFilters.filterPriceTo"
-                     :category-id.sync="customFilters.filterCategoryId"
-                     :color-ids.sync="customFilters.filterColorIds"
-                     :material-ids.sync="customFilters.filterMaterialIds"
-                     :season-ids.sync="customFilters.filterSeasonIds"
-                     />
+      <ProductFilter :current-filters.sync="customFilters"/>
 
       <section class="catalog">
         <Loader v-if="isUiLocked"/>

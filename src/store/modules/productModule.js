@@ -38,12 +38,12 @@ export default {
   },
   actions: {
     async loadProducts({ commit }, {
-      page,
-      limit,
       categoryId,
       materialIds,
       seasonIds,
       colorIds,
+      page,
+      limit,
       minPrice,
       maxPrice,
     }) {
