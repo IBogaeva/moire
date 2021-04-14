@@ -21,14 +21,19 @@
 <script>
 
 export default {
-  props: ['currentAmount'],
+  props: {
+    currentAmount: {
+      type: Number,
+      default: 1,
+    },
+  },
   computed: {
     computedAmount: {
       get() {
         return this.currentAmount;
       },
       set(value) {
-        if (typeof value === 'number') {
+        if (typeof value === 'number' && value > 0) {
           this.$emit('update:currentAmount', Math.abs(value));
         } else {
           this.$emit('update:currentAmount', 1);

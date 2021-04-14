@@ -13,7 +13,15 @@
 
 <script>
 export default {
-  props: ['colors', 'currentColorId'],
+  props: {
+    colors: {
+      type: Array,
+    },
+    currentColorId: {
+      type: Number,
+      default: 0,
+    },
+  },
   computed: {
     computedColorId: {
       get() {

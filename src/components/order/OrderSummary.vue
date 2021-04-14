@@ -27,13 +27,17 @@ export default {
   },
   props: {
     data: {
-      default: {
-        items: [],
-        totalAmount: null,
-        totalPrice: null,
+      type: Object,
+      default() {
+        return {
+          items: [],
+          totalAmount: null,
+          totalPrice: null,
+        };
       },
     },
     deliveryType: {
+      type: Object,
       default() {
         return {
           id: 0,

@@ -78,7 +78,12 @@ const INITIAL_FILTERS = {
 };
 
 export default {
-  props: ['currentFilters'],
+  props: {
+    currentFilters: {
+      type: Object,
+      required: true,
+    },
+  },
   components: {
     CheckList, OptionList, Loader,
   },

@@ -11,7 +11,15 @@
 
 <script>
 export default {
-  props: ['list', 'currentId'],
+  props: {
+    list: {
+      type: Array,
+    },
+    currentId: {
+      type: Number,
+      default: 0,
+    },
+  },
   computed: {
     computedId: {
       get() {

@@ -29,7 +29,10 @@ export default {
     numberFormat,
   },
   props: {
-    product: {},
+    product: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {

@@ -48,7 +48,11 @@ export default {
   filters: {
     numberFormat,
   },
-  props: ['item'],
+  props: {
+    item: {
+      type: Object,
+    },
+  },
   components: { AmountChange, Loader },
   computed: {
     ...mapGetters({

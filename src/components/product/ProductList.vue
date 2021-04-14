@@ -14,6 +14,10 @@ export default {
   components: {
     ProductItem,
   },
-  props: ['products'],
+  props: {
+    products: {
+      type: Array,
+    },
+  },
 };
 </script>

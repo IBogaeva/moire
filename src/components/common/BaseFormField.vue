@@ -8,6 +8,15 @@
 
 <script>
 export default {
-  props: ['title', 'error'],
+  props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    error: {
+      type: String,
+      default: '',
+    },
+  },
 };
 </script>
