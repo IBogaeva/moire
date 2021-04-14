@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import { API_BASE_URL } from '@/config';
 import axios from 'axios';
+import images from '@/data/images';
 
 Vue.use(Vuex);
 
@@ -25,15 +26,18 @@ export default {
         : [];
     },
     productData(state) {
+      if (state.productData) {
+        state.productData.colors.map((color) => color.gallery.push(...images));
+      }
       return state.productData
         ? state.productData
         : undefined;
     },
-    colorIdData(state, getters) {
-      return getters.productData.colors ? getters.productData.colors[0].color.id : 0;
+    colorIdData(state) {
+      return state.productData.colors ? state.productData.colors[0].color.id : 0;
     },
-    sizeIdData(state, getters) {
-      return getters.productData.sizes ? getters.productData.sizes[0].id : 0;
+    sizeIdData(state) {
+      return state.productData.sizes ? state.productData.sizes[0].id : 0;
     },
   },
   actions: {

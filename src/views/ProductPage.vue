@@ -34,7 +34,7 @@
         </div>
         <ul class="pics__list">
           <li class="pics__item" v-for="item in images" :key="item.id">
-            <router-link class="pics__link pics__link--current"
+            <router-link class="pics__link"
                          :to="{name: 'product', params: {id: product.id}}">
               <img width="98" height="98" :src="item.file.url"
                    :alt="product.title">
@@ -149,10 +149,14 @@ export default {
       }));
     },
     images() {
-      return (this.product.colors && this.product.colors.gallery)
-        ? this.product.colors
-          .find((item) => item.color.id === this.currentColorId).gallery
-        : [];
+      if (this.product.colors) {
+        const color = this.product.colors
+          .find((item) => item.color.id === this.currentColorId);
+        if (color && color.gallery) {
+          return color.gallery.filter((it) => it.file.url !== this.image);
+        }
+      }
+      return [];
     },
     image() {
       if (this.product.colors) {
